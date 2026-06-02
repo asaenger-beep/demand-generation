@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Work Showcase — The Predictive Index</title>
+  <style>
+    /* ── PI Brand Fonts (official TTFs from pi-brand-fonts skill) ── */
+    @font-face {
+      font-family: "Roboto";
+      src: url("fonts/Roboto-Light.ttf") format("truetype");
+      font-weight: 300; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      src: url("fonts/Roboto-Regular.ttf") format("truetype");
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      src: url("fonts/Roboto-Medium.ttf") format("truetype");
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto";
+      src: url("fonts/Roboto-Bold.ttf") format("truetype");
+      font-weight: 700; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: "Roboto Serif";
+      src: url("fonts/RobotoSerif-Medium.ttf") format("truetype");
+      font-weight: 500; font-style: normal; font-display: swap;
+    }
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── PI Brand Tokens ── */
+    :root {
+      /* Colors */
+      --pi-purple:   #2E1F44;
+      --pi-violet:   #5000A8;
+      --pi-blue:     #0092C8;
+      --pi-red:      #EF3340;
+      --pi-offwhite: #FFFDF8;
+      --pi-black:    #000000;
+      --pi-border:   #D9D9D9;
+      --pi-card-bg:  #FFFFFF;
+      --pi-muted:    #5C5C5C;
+
+      /* Badge palette (PI brand tints) */
+      --badge-canva-bg:  #EDE6F7;
+      --badge-canva-fg:  #5000A8;
+      --badge-pdf-bg:    #FDEAEB;
+      --badge-pdf-fg:    #C4202C;
+      --badge-miro-bg:   #DDF0FA;
+      --badge-miro-fg:   #006F99;
+      --badge-code-bg:   #EAE6F0;
+      --badge-code-fg:   #2E1F44;
+
+      /* Layout */
+      --radius: 8px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.07);
+      --shadow-hover: 0 4px 10px rgba(0,0,0,.10), 0 14px 30px rgba(0,0,0,.10);
+    }
+
+    body {
+      background: var(--pi-offwhite);
+      color: var(--pi-black);
+      font-family: "Roboto", system-ui, sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+    }
+
+    /* ── Header (Purple bar + PI logo) ── */
+    header {
+      background: var(--pi-purple);
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+    }
+    .header-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      height: 72px;
+    }
+    .logo-link { display: flex; align-items: center; }
+    .logo-link img { height: 28px; width: auto; display: block; }
+    .header-label {
+      font-family: "Roboto", sans-serif;
+      font-size: .8rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.65);
+      letter-spacing: .01em;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 1120px;
+      margin: 3.5rem auto 2rem;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+    }
+    .hero h1 {
+      font-family: "Roboto Serif", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(1.9rem, 4vw, 2.75rem);
+      line-height: 1.15;
+      letter-spacing: -.01em;
+      color: var(--pi-black);
+      margin-bottom: .75rem;
+    }
+    .hero p {
+      font-family: "Roboto", sans-serif;
+      font-size: .9875rem;
+      color: var(--pi-muted);
+      max-width: 520px;
+      line-height: 1.65;
+    }
+
+    /* ── Filter pills ── */
+    .filters {
+      max-width: 1120px;
+      margin: 0 auto 2rem;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    .pill {
+      background: var(--pi-card-bg);
+      border: 1.5px solid var(--pi-border);
+      border-radius: 999px;
+      padding: .35rem 1rem;
+      font-family: "Roboto", sans-serif;
+      font-size: .8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color .15s, color .15s, background .15s;
+      color: var(--pi-muted);
+      user-select: none;
+    }
+    .pill:hover  { border-color: var(--pi-violet); color: var(--pi-violet); }
+    .pill.active { background: var(--pi-violet); border-color: var(--pi-violet); color: #fff; }
+
+    /* ── Grid ── */
+    .grid {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 clamp(1.5rem, 5vw, 4rem) 5.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--pi-card-bg);
+      border: 1px solid var(--pi-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .card[data-hidden] { display: none; }
+
+    /* Thumbnail area */
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--pi-offwhite);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.75rem;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--pi-border);
+    }
+    .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Body */
+    .card-body {
+      padding: 1.25rem 1.5rem .75rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+
+    /* Type badge */
+    .type-badge {
+      display: inline-flex;
+      align-items: center;
+      font-family: "Roboto", sans-serif;
+      font-size: .675rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      padding: .2rem .55rem;
+      width: fit-content;
+    }
+    .type-badge.canva { background: var(--badge-canva-bg); color: var(--badge-canva-fg); }
+    .type-badge.pdf   { background: var(--badge-pdf-bg);   color: var(--badge-pdf-fg);   }
+    .type-badge.miro  { background: var(--badge-miro-bg);  color: var(--badge-miro-fg);  }
+    .type-badge.code  { background: var(--badge-code-bg);  color: var(--badge-code-fg);  }
+
+    /* Card title — H3 level, Roboto Medium */
+    .card-title {
+      font-family: "Roboto", sans-serif;
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--pi-black);
+    }
+
+    /* Card description — Roboto Regular */
+    .card-desc {
+      font-family: "Roboto", sans-serif;
+      font-size: .845rem;
+      color: var(--pi-muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    /* Footer / CTA */
+    .card-footer { padding: .75rem 1.5rem 1.25rem; }
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-family: "Roboto", sans-serif;
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--pi-violet);
+      text-decoration: none;
+      padding: .45rem .9rem;
+      border: 1.5px solid var(--pi-violet);
+      border-radius: 5px;
+      transition: background .15s, color .15s;
+    }
+    .card-link:hover { background: var(--pi-violet); color: #fff; }
+    .card-link svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+    /* ── Divider between hero and filters ── */
+    .section-divider {
+      max-width: 1120px;
+      margin: 0 auto 2rem;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+    }
+    .section-divider hr {
+      border: none;
+      border-top: 1px solid var(--pi-border);
+    }
+
+    /* ── Calendar ── */
+    .cal-section {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 2rem clamp(1.5rem, 5vw, 4rem) 4rem;
+    }
+    .cal-header { margin-bottom: 1.25rem; }
+    .cal-title {
+      font-family: "Roboto Serif", Georgia, serif;
+      font-weight: 500;
+      font-size: clamp(1.4rem, 3vw, 1.875rem);
+      color: var(--pi-black);
+      margin-bottom: .3rem;
+    }
+    .cal-subtitle {
+      font-family: "Roboto", sans-serif;
+      font-size: .875rem;
+      color: var(--pi-muted);
+    }
+
+    /* Source chips */
+    .cal-sources { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+    .source-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      font-family: "Roboto", sans-serif;
+      font-size: .775rem;
+      font-weight: 500;
+      color: var(--pi-violet);
+      background: #EDE6F7;
+      border: 1px solid #D0BFEE;
+      border-radius: 999px;
+      padding: .3rem .85rem;
+      text-decoration: none;
+    }
+    .source-chip:hover { background: var(--pi-violet); color: #fff; }
+    .source-chip svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+    /* Quarter navigation */
+    .cal-qnav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .cal-nav-btn {
+      font-family: "Roboto", sans-serif;
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--pi-violet);
+      background: var(--pi-card-bg);
+      border: 1.5px solid var(--pi-border);
+      border-radius: 6px;
+      padding: .4rem .9rem;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+      flex-shrink: 0;
+    }
+    .cal-nav-btn:hover:not(:disabled) { border-color: var(--pi-violet); }
+    .cal-nav-btn:disabled { opacity: .3; cursor: default; }
+    .cal-q-pills { display: flex; gap: .4rem; flex-wrap: wrap; justify-content: center; }
+    .cal-q-pill {
+      font-family: "Roboto", sans-serif;
+      font-size: .8rem;
+      font-weight: 500;
+      padding: .35rem .9rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--pi-border);
+      background: var(--pi-card-bg);
+      color: var(--pi-muted);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .cal-q-pill:hover { border-color: var(--pi-violet); color: var(--pi-violet); }
+    .cal-q-pill.active { background: var(--pi-violet); border-color: var(--pi-violet); color: #fff; }
+
+    /* 3-up month grid */
+    .cal-quarter-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+    @media (max-width: 860px) {
+      .cal-quarter-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Month card */
+    .cal-month-card {
+      background: var(--pi-card-bg);
+      border: 1px solid var(--pi-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .cal-month-head {
+      background: var(--pi-purple);
+      padding: .65rem 1rem;
+      font-family: "Roboto", sans-serif;
+      font-size: .875rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: .01em;
+    }
+
+    /* Day-of-week row */
+    .cal-dow {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background: #F0EBF8;
+      border-bottom: 1px solid var(--pi-border);
+    }
+    .cal-dow-cell {
+      text-align: center;
+      font-family: "Roboto", sans-serif;
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--pi-muted);
+      padding: .35rem 0;
+    }
+
+    /* Day grid */
+    .cal-day-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: var(--pi-border);
+      border-top: none;
+    }
+    .cal-day-cell {
+      background: var(--pi-card-bg);
+      min-height: 56px;
+      padding: .2rem .15rem .15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .cal-day-cell.other-month { background: #F9F9F7; }
+    .cal-day-num {
+      font-family: "Roboto", sans-serif;
+      font-size: .7rem;
+      font-weight: 500;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--pi-black);
+      align-self: flex-end;
+      flex-shrink: 0;
+      margin-bottom: 1px;
+    }
+    .cal-day-cell.other-month .cal-day-num { color: #C8C8C8; }
+    .cal-day-cell.today .cal-day-num {
+      background: var(--pi-violet);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* Event chips */
+    .cal-chip {
+      display: block;
+      font-family: "Roboto", sans-serif;
+      font-size: .58rem;
+      font-weight: 500;
+      line-height: 1.5;
+      padding: .05rem .3rem;
+      border-radius: 3px;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-decoration: none;
+      cursor: pointer;
+      order: -1;
+    }
+    .cal-chip:hover { filter: brightness(1.15); }
+    .cal-chip.webinar { background: var(--pi-violet); }
+    .cal-chip.email   { background: var(--pi-blue); }
+    .cal-chip.webop   { background: var(--pi-purple); }
+    .cal-chip.done    { background: #B0B0B0; }
+    .cal-more {
+      font-family: "Roboto", sans-serif;
+      font-size: .57rem;
+      color: var(--pi-muted);
+      padding: 0 .25rem;
+      order: -1;
+      line-height: 1.5;
+    }
+
+    /* Legend */
+    .cal-legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .cal-legend-item {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-family: "Roboto", sans-serif;
+      font-size: .775rem;
+      color: var(--pi-muted);
+    }
+    .cal-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--pi-purple);
+      padding: 1.5rem clamp(1.5rem, 5vw, 4rem);
+    }
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    footer img { height: 20px; opacity: .75; }
+    .footer-text {
+      font-family: "Roboto", sans-serif;
+      font-size: .75rem;
+      font-weight: 300;
+      color: rgba(255,255,255,.5);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+  <div class="header-inner">
+    <a class="logo-link" href="#">
+      <img src="PI_Logo_White.png" alt="The Predictive Index" />
+    </a>
+  </div>
+</header>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <h1>Artifacts &amp; Deliverables</h1>
+  <p>A curated collection of work — designs, documents, boards, and more — built to share clearly with your stakeholders.</p>
+</section>
+
+<!-- ── Divider ── -->
+<div class="section-divider"><hr /></div>
+
+<!-- ── Filters ── -->
+<div class="filters" id="filters">
+  <div class="pill active" data-filter="all">All</div>
+  <div class="pill" data-filter="canva">Canva</div>
+  <div class="pill" data-filter="pdf">PDF</div>
+  <div class="pill" data-filter="miro">Miro</div>
+  <div class="pill" data-filter="code">Code / Data</div>
+</div>
+
+<!-- ── Card Grid ── -->
+<main class="grid" id="grid">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ARTIFACT CARDS — edit or duplicate these blocks freely.
+       • Set href="#" → your real Canva / PDF / Miro / etc. link.
+       • Replace the emoji thumb with an <img> for a real preview.
+       • Change data-type to: canva | pdf | miro | code
+  ════════════════════════════════════════════════════════════ -->
+
+  <article class="card" data-type="canva">
+    <div class="card-thumb">🎨</div>
+    <div class="card-body">
+      <span class="type-badge canva">Canva</span>
+      <h2 class="card-title">Brand Presentation</h2>
+      <p class="card-desc">Full brand deck covering positioning, visual identity, and key messaging for stakeholder review.</p>
+    </div>
+    <div class="card-footer">
+      <a class="card-link" href="#" target="_blank" rel="noopener">
+        View Design
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 11 10 2M4 2h6v6"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <article class="card" data-type="pdf">
+    <div class="card-thumb">📄</div>
+    <div class="card-body">
+      <span class="type-badge pdf">PDF</span>
+      <h2 class="card-title">Project Proposal</h2>
+      <p class="card-desc">Detailed project proposal including scope, timeline, and budget breakdown.</p>
+    </div>
+    <div class="card-footer">
+      <a class="card-link" href="#" target="_blank" rel="noopener">
+        Open PDF
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 11 10 2M4 2h6v6"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <article class="card" data-type="miro">
+    <div class="card-thumb">🗺️</div>
+    <div class="card-body">
+      <span class="type-badge miro">Miro</span>
+      <h2 class="card-title">Process Map</h2>
+      <p class="card-desc">End-to-end workflow diagram mapping current-state operations and recommended improvements.</p>
+    </div>
+    <div class="card-footer">
+      <a class="card-link" href="#" target="_blank" rel="noopener">
+        Open Board
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 11 10 2M4 2h6v6"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <article class="card" data-type="code">
+    <div class="card-thumb">📊</div>
+    <div class="card-body">
+      <span class="type-badge code">Code / Data</span>
+      <h2 class="card-title">Performance Dashboard</h2>
+      <p class="card-desc">Interactive dashboard visualizing campaign performance metrics and KPI trends.</p>
+    </div>
+    <div class="card-footer">
+      <a class="card-link" href="#" target="_blank" rel="noopener">
+        View Dashboard
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 11 10 2M4 2h6v6"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <article class="card" data-type="canva">
+    <div class="card-thumb">🖼️</div>
+    <div class="card-body">
+      <span class="type-badge canva">Canva</span>
+      <h2 class="card-title">Social Media Kit</h2>
+      <p class="card-desc">Set of social templates — stories, posts, and covers — formatted for all major platforms.</p>
+    </div>
+    <div class="card-footer">
+      <a class="card-link" href="#" target="_blank" rel="noopener">
+        View Design
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 11 10 2M4 2h6v6"/></svg>
+      </a>
+    </div>
+  </article>
+
+  <article class="card" data-type="pdf">
+    <div class="card-thumb">📋</div>
+    <div class="card-body">
+      <span class="type-badge pdf">PDF</span>
+      <h2 class="card-title">Research Report</h2>
+      <p class="card-desc">Market research findings with competitive analysis and strategic recommendations.</p>
+    </div>
+    <div class="card-footer">
+      <a class="card-link" href="#" target="_blank" rel="noopener">
+        Open PDF
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 11 10 2M4 2h6v6"/></svg>
+      </a>
+    </div>
+  </article>
+
+</main>
+
+<!-- ── Calendar Section ── -->
+<div class="section-divider" style="margin-top:1rem;"><hr /></div>
+
+<section class="cal-section">
+  <div class="cal-header">
+    <div>
+      <h2 class="cal-title">Calendar</h2>
+      <p class="cal-subtitle">Upcoming events from connected sources</p>
+    </div>
+  </div>
+
+  <div class="cal-sources" id="cal-sources"></div>
+  <div class="cal-qnav" id="cal-qnav"></div>
+  <div id="cal-body" class="cal-quarter-grid"></div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <img src="PI_Logo_White.png" alt="The Predictive Index" />
+    <span class="footer-text">&copy; 2026 The Predictive Index</span>
+  </div>
+</footer>
+
+<script>
+  /* ── Artifact filter pills ── */
+  const pills = document.querySelectorAll('.pill');
+  const cards = document.querySelectorAll('.card');
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      const filter = pill.dataset.filter;
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      cards.forEach(card => {
+        card.toggleAttribute('data-hidden', filter !== 'all' && card.dataset.type !== filter);
+      });
+    });
+  });
+
+  /* ══════════════════════════════════════════════════
+     CALENDAR DATA
+     Add new events here. Each source has a name, url,
+     and an array of events. To add a new source, append
+     another object to CALENDAR_SOURCES.
+  ══════════════════════════════════════════════════ */
+  const CALENDAR_SOURCES = [
+    {
+      name: "HRCI Webinar Series",
+      asana_url: "https://app.asana.com/1/72821875617629/project/1215306885601805",
+      events: [
+        // ── Completed ──
+        { date: "2026-03-16", name: "HRCI Webinar — March 16",   completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307179726475" },
+        { date: "2026-04-22", name: "HRCI Webinar — April 22",   completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307179726635" },
+        { date: "2026-05-20", name: "HRCI Webinar — May 20",     completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307710131634" },
+        // ── Upcoming ──
+        { date: "2026-06-24", name: "HRCI Webinar — June 24",    completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307135600125" },
+        { date: "2026-07-22", name: "HRCI Webinar — July 22",    completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307475488261" },
+        { date: "2026-08-19", name: "HRCI Webinar — August 19",  completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307710131698" },
+        { date: "2026-09-18", name: "HRCI Webinar — September 18", completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307710131506" },
+        { date: "2026-10-28", name: "HRCI Webinar — October 28", completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307091487509" },
+        { date: "2026-11-20", name: "HRCI Webinar — November 20",completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307179726571" },
+        { date: "2026-12-14", name: "HRCI Webinar — December 14",completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307710131570" },
+      ]
+    },
+    {
+      name: "HRCI Email Campaign",
+      asana_url: "https://app.asana.com/1/72821875617629/project/1215306885601805",
+      events: [
+        // ── Completed ──
+        { date: "2026-01-20", name: "HRCI Email — January 20",   completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307476444855" },
+        { date: "2026-02-03", name: "HRCI Email — February 3",   completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307476734504" },
+        { date: "2026-02-16", name: "HRCI Email — February 16",  completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307476505794" },
+        { date: "2026-03-13", name: "HRCI Email — March 13",     completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307180927010" },
+        { date: "2026-03-30", name: "HRCI Email — March 30",     completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307476779199" },
+        { date: "2026-04-09", name: "HRCI Email — April 9",      completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307476674827" },
+        { date: "2026-04-27", name: "HRCI Email — April 27",     completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307180751067" },
+        { date: "2026-05-08", name: "HRCI Email — May 8",        completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307796068281" },
+        { date: "2026-05-19", name: "HRCI Email — May 19",       completed: true,  url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307710693436" },
+        // ── Upcoming ──
+        { date: "2026-06-08", name: "HRCI Email — June 8",       completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307181120665" },
+        { date: "2026-06-18", name: "HRCI Email — June 18",      completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307476753887" },
+        { date: "2026-07-21", name: "HRCI Email — July 21",      completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307711433859" },
+        { date: "2026-08-11", name: "HRCI Email — August 11",    completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307181128144" },
+        { date: "2026-08-24", name: "HRCI Email — August 24",    completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307180781128" },
+        { date: "2026-09-10", name: "HRCI Email — September 10", completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307476702238" },
+        { date: "2026-09-28", name: "HRCI Email — September 28", completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307181179782" },
+        { date: "2026-10-14", name: "HRCI Email — October 14",   completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307757924204" },
+        { date: "2026-11-10", name: "HRCI Email — November 10",  completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307711458554" },
+        { date: "2026-12-02", name: "HRCI Email — December 2",   completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307711271985" },
+        { date: "2026-12-17", name: "HRCI Email — December 17",  completed: false, url: "https://app.asana.com/1/72821875617629/project/1215306885601805/task/1215307476781518" },
+      ]
+    },
+    {
+      name: "Web Optimization Roadmap",
+      asana_url: "https://docs.google.com/spreadsheets/d/1a5nFUJPPEHqAEq4qjc4cmxiZ8hwKee8-CM3ZuqlS_ls/edit?gid=1962866422#gid=1962866422",
+      events: [
+        // ── Q1 2026 ──
+        { date: "2026-01-14", name: "Remove Unused RD Field",              completed: true  },
+        { date: "2026-02-01", name: "Homepage A/B Test",                   completed: true  },
+        { date: "2026-02-04", name: "BA Page Optimizations",               completed: true  },
+        { date: "2026-02-04", name: "Cog Page Optimizations",              completed: true  },
+        { date: "2026-02-05", name: "Remove Free Trial CTA on /Hire",      completed: true  },
+        { date: "2026-02-06", name: "Blog – Transformational Leadership",  completed: true  },
+        { date: "2026-02-06", name: "Blog – Adaptive Leadership",          completed: true  },
+        { date: "2026-02-06", name: "Blog – Leadership Development",       completed: true  },
+        { date: "2026-02-11", name: "BA 'Starts with an Assessment'",      completed: true  },
+        { date: "2026-02-11", name: "Top Nav Refresh",                     completed: true  },
+        { date: "2026-02-13", name: "Replace TOE on /Solution",            completed: true  },
+        { date: "2026-02-18", name: "Bypass Try PI Modal for PPC",         completed: true  },
+        { date: "2026-02-20", name: "New Industry Pages",                  completed: true  },
+        { date: "2026-02-20", name: "/Solution Page Optimizations",        completed: true  },
+        { date: "2026-03-03", name: "Blog – Team Player",                  completed: true  },
+        { date: "2026-03-03", name: "Blog – Team Motivation",              completed: true  },
+        { date: "2026-03-06", name: "Updated 'Years of Science'",          completed: true  },
+        { date: "2026-03-10", name: "Blog – Key Leadership Skills",        completed: true  },
+        { date: "2026-03-12", name: "Blog – Leadership Styles",            completed: false },
+        { date: "2026-03-13", name: "Sunset PI Post Lander",               completed: true  },
+        { date: "2026-03-16", name: "Try PI Mobile Optimizations",         completed: true  },
+        { date: "2026-03-17", name: "Blog – Leadership Challenges",        completed: true  },
+        { date: "2026-03-17", name: "Blog – Improve Team Dynamics",        completed: true  },
+        { date: "2026-03-18", name: "Blog – Team Performance",             completed: true  },
+        { date: "2026-03-18", name: "Blog – Talent Management",            completed: true  },
+        { date: "2026-03-19", name: "Blog – Capacity Building",            completed: true  },
+        { date: "2026-03-23", name: "Transform Conf. Personalization",     completed: true  },
+        { date: "2026-03-24", name: "Blog – Career Pathing",               completed: true  },
+        { date: "2026-03-24", name: "Blog – Skills Gap Analysis",          completed: true  },
+        { date: "2026-03-26", name: "Hero Form Test",                      completed: true  },
+        { date: "2026-03-30", name: "Culture Index Compare Page",          completed: false },
+        { date: "2026-03-31", name: "Blog – Decision Making",              completed: true  },
+        { date: "2026-03-31", name: "Blog – Social Styles",                completed: true  },
+        // ── Q2 2026 ──
+        { date: "2026-04-01", name: "Hire Content + CTA Updates",          completed: true  },
+        { date: "2026-04-03", name: "5 HS CTA Templates",                  completed: true  },
+        { date: "2026-04-03", name: "New BA Video Thumbnail",              completed: true  },
+        { date: "2026-04-06", name: "Reference Profile FAQ",               completed: true  },
+        { date: "2026-04-07", name: "Blog – Personality Test",             completed: true  },
+        { date: "2026-04-07", name: "Blog – Exit Interview",               completed: true  },
+        { date: "2026-04-09", name: "Blog – Social Styles 2",              completed: false },
+        { date: "2026-04-10", name: "All HS CTAs Done",                    completed: true  },
+        { date: "2026-04-10", name: "Running on Empty Ebook",              completed: true  },
+        { date: "2026-04-14", name: "Hidden Nav for PPC",                  completed: true  },
+        { date: "2026-04-14", name: "Blog – Retention",                    completed: true  },
+        { date: "2026-04-14", name: "Blog – Internal Recruitment",         completed: true  },
+        { date: "2026-04-15", name: "New Hospitality + FinServ Pages",     completed: true  },
+        { date: "2026-04-15", name: "2 HS CTA A/B Tests",                  completed: false },
+        { date: "2026-04-20", name: "MattyP Try PI Experience",            completed: false },
+        { date: "2026-04-22", name: "Homepage Ebook Pillar Piece",         completed: true  },
+        { date: "2026-04-22", name: "Validity Study CTA Placements",       completed: true  },
+        { date: "2026-04-28", name: "Add Ambassador Page to Footer",       completed: true  },
+        { date: "2026-04-30", name: "Blog – Science Ecological Validity",  completed: false },
+        { date: "2026-04-30", name: "New Newsletter Subscription CTA",     completed: false },
+        { date: "2026-05-04", name: "Science Statement Placements",        completed: false },
+        { date: "2026-05-12", name: "Footer Redesign",                     completed: false },
+        { date: "2026-05-12", name: "Try PI CTA – Engagement Quiz",        completed: true  },
+        { date: "2026-05-13", name: "Blog – Offboarding",                  completed: true  },
+        { date: "2026-05-13", name: "Blog – Situational Interview Qs",     completed: true  },
+        { date: "2026-05-14", name: "Blog – Async Communication",          completed: true  },
+        { date: "2026-05-19", name: "Blog – HR KPIs",                      completed: true  },
+        { date: "2026-05-19", name: "Blog – Change Management Plan",       completed: true  },
+        { date: "2026-05-19", name: "Blog – Virtual Ice Breakers",         completed: true  },
+        { date: "2026-05-19", name: "Blog – Employee Engagement",          completed: true  },
+        { date: "2026-05-19", name: "Blog – Organizational Resilience",    completed: true  },
+        { date: "2026-05-19", name: "Blog – Remote Team Building",         completed: true  },
+        { date: "2026-05-19", name: "Blog – Stand Up Meeting",             completed: false },
+        { date: "2026-05-20", name: "Blog – All Hands Meeting",            completed: true  },
+        { date: "2026-05-21", name: "Healthcare Video Case Study",         completed: true  },
+        { date: "2026-05-22", name: "Blog – Org Change Management",        completed: true  },
+        { date: "2026-05-28", name: "Blog – Team Structure",               completed: true  },
+        { date: "2026-05-28", name: "Blog – M&A Integration Checklist",    completed: true  },
+        { date: "2026-05-29", name: "Blog – Communication Styles",         completed: true  },
+        { date: "2026-05-29", name: "/Assessments-Validity Optimizations", completed: false },
+        { date: "2026-06-01", name: "Stacked RD Form Test",                completed: false },
+        { date: "2026-06-02", name: "Assessments Page Optimizations",      completed: false },
+        { date: "2026-06-12", name: "Science Page Optimizations",          completed: false },
+        { date: "2026-06-12", name: "New CEO Persona Page",                completed: false },
+        { date: "2026-06-30", name: "Footer Consolidation",                completed: false },
+        // ── Q3 2026 ──
+        { date: "2026-09-29", name: "PI for Managers – Social Proof",      completed: false },
+      ].map(e => ({ ...e, url: "https://docs.google.com/spreadsheets/d/1a5nFUJPPEHqAEq4qjc4cmxiZ8hwKee8-CM3ZuqlS_ls/edit?gid=1962866422#gid=1962866422" }))
+    }
+  ];
+
+  /* ── Calendar renderer (grid view) ── */
+  (function renderCalendar() {
+    const MONTHS    = ["January","February","March","April","May","June",
+                       "July","August","September","October","November","December"];
+    const DOW_SHORT = ["S","M","T","W","T","F","S"];
+    const YEAR      = 2026;
+    const SOURCE_TYPE = {
+      "HRCI Webinar Series":    "webinar",
+      "HRCI Email Campaign":    "email",
+      "Web Optimization Roadmap": "webop",
+    };
+    const today = new Date();
+
+    // date string → [events]
+    const eventMap = {};
+    CALENDAR_SOURCES.forEach(src => {
+      src.events.forEach(ev => {
+        if (!eventMap[ev.date]) eventMap[ev.date] = [];
+        eventMap[ev.date].push({ ...ev, _source: src.name });
+      });
+    });
+
+    // Source chips
+    const chipsEl = document.getElementById('cal-sources');
+    CALENDAR_SOURCES.forEach(src => {
+      const a = document.createElement('a');
+      a.className = 'source-chip';
+      a.href = src.asana_url; a.target = '_blank'; a.rel = 'noopener';
+      a.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="4.5" r="3"/><circle cx="3" cy="11.5" r="3"/><circle cx="13" cy="11.5" r="3"/></svg>${src.name}`;
+      chipsEl.appendChild(a);
+    });
+
+    // Quarter nav
+    let currentQ = Math.floor(today.getMonth() / 3);
+    const qNavEl = document.getElementById('cal-qnav');
+    const bodyEl = document.getElementById('cal-body');
+
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'cal-nav-btn'; prevBtn.textContent = '‹ Previous';
+    const pillsWrap = document.createElement('div');
+    pillsWrap.className = 'cal-q-pills';
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'cal-nav-btn'; nextBtn.textContent = 'Next ›';
+    qNavEl.append(prevBtn, pillsWrap, nextBtn);
+
+    ['Q1','Q2','Q3','Q4'].forEach((label, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'cal-q-pill';
+      btn.textContent = `${label} ${YEAR}`;
+      btn.addEventListener('click', () => { currentQ = i; update(); });
+      pillsWrap.appendChild(btn);
+    });
+    prevBtn.addEventListener('click', () => { if (currentQ > 0) { currentQ--; update(); } });
+    nextBtn.addEventListener('click', () => { if (currentQ < 3) { currentQ++; update(); } });
+
+    // Month card builder
+    function buildMonth(year, month) {
+      const card = document.createElement('div');
+      card.className = 'cal-month-card';
+
+      const head = document.createElement('div');
+      head.className = 'cal-month-head';
+      head.textContent = `${MONTHS[month]} ${year}`;
+      card.appendChild(head);
+
+      const dowRow = document.createElement('div');
+      dowRow.className = 'cal-dow';
+      DOW_SHORT.forEach(d => {
+        const c = document.createElement('div');
+        c.className = 'cal-dow-cell'; c.textContent = d;
+        dowRow.appendChild(c);
+      });
+      card.appendChild(dowRow);
+
+      const grid = document.createElement('div');
+      grid.className = 'cal-day-grid';
+
+      const firstDow    = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrev  = new Date(year, month, 0).getDate();
+      const totalCells  = Math.ceil((firstDow + daysInMonth) / 7) * 7;
+
+      for (let i = 0; i < totalCells; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-day-cell';
+        let dayNum, cm, cy;
+
+        if (i < firstDow) {
+          dayNum = daysInPrev - firstDow + i + 1;
+          cm = month === 0 ? 11 : month - 1;
+          cy = month === 0 ? year - 1 : year;
+          cell.classList.add('other-month');
+        } else if (i >= firstDow + daysInMonth) {
+          dayNum = i - firstDow - daysInMonth + 1;
+          cm = month === 11 ? 0 : month + 1;
+          cy = month === 11 ? year + 1 : year;
+          cell.classList.add('other-month');
+        } else {
+          dayNum = i - firstDow + 1; cm = month; cy = year;
+          if (cy === today.getFullYear() && cm === today.getMonth() && dayNum === today.getDate())
+            cell.classList.add('today');
+        }
+
+        const numEl = document.createElement('div');
+        numEl.className = 'cal-day-num'; numEl.textContent = dayNum;
+        cell.appendChild(numEl);
+
+        const key = `${cy}-${String(cm+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`;
+        const dayEvts = eventMap[key] || [];
+        const maxShow = 2;
+        dayEvts.slice(0, maxShow).forEach(ev => {
+          const chip = document.createElement('a');
+          chip.className = 'cal-chip';
+          chip.href = ev.url; chip.target = '_blank'; chip.rel = 'noopener';
+          chip.title = ev.name;
+          const type = SOURCE_TYPE[ev._source] || 'webinar';
+          chip.classList.add(ev.completed ? 'done' : type);
+          chip.textContent = type === 'webop' ? ev.name
+                           : type === 'webinar' ? 'HRCI Webinar' : 'HRCI Email';
+          cell.insertBefore(chip, numEl);
+        });
+        if (dayEvts.length > maxShow) {
+          const more = document.createElement('span');
+          more.className = 'cal-more';
+          more.textContent = `+${dayEvts.length - maxShow} more`;
+          cell.insertBefore(more, numEl);
+        }
+
+        grid.appendChild(cell);
+      }
+      card.appendChild(grid);
+      return card;
+    }
+
+    function update() {
+      pillsWrap.querySelectorAll('.cal-q-pill').forEach((p, i) => p.classList.toggle('active', i === currentQ));
+      prevBtn.disabled = currentQ === 0;
+      nextBtn.disabled = currentQ === 3;
+      bodyEl.innerHTML = '';
+      const start = currentQ * 3;
+      for (let m = 0; m < 3; m++) bodyEl.appendChild(buildMonth(YEAR, start + m));
+    }
+
+    update();
+
+    // Legend
+    const legend = document.createElement('div');
+    legend.className = 'cal-legend';
+    legend.innerHTML = `
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pi-violet)"></div>HRCI Webinar</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pi-blue)"></div>HRCI Email</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pi-purple)"></div>Web Optimization</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#B0B0B0"></div>Completed</div>`;
+    document.querySelector('.cal-section').appendChild(legend);
+  })();
+</script>
+
+</body>
+</html>

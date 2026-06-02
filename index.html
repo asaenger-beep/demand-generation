@@ -635,10 +635,12 @@
       order: -1;
     }
     .cal-chip:hover { filter: brightness(1.15); }
-    .cal-chip.webinar { background: var(--pi-violet); }
-    .cal-chip.email   { background: var(--pi-blue); }
-    .cal-chip.webop   { background: var(--pi-purple); }
-    .cal-chip.done    { background: #B0B0B0; }
+    .cal-chip.webinar  { background: var(--pi-violet); }
+    .cal-chip.email    { background: var(--pi-blue); }
+    .cal-chip.webop    { background: var(--pi-purple); }
+    .cal-chip.hrdive   { background: var(--pi-red); }
+    .cal-chip.workweek { background: #8A4FD0; }
+    .cal-chip.done     { background: #B0B0B0; }
     .cal-more {
       font-family: "Roboto", sans-serif;
       font-size: .65rem;
@@ -993,6 +995,23 @@
         // ── Q3 2026 ──
         { date: "2026-09-29", name: "PI for Managers – Social Proof",      completed: false },
       ].map(e => ({ ...e, url: "https://docs.google.com/spreadsheets/d/1a5nFUJPPEHqAEq4qjc4cmxiZ8hwKee8-CM3ZuqlS_ls/edit?gid=1962866422#gid=1962866422" }))
+    },
+    {
+      name: "HR Dive",
+      asana_url: "#",
+      events: [
+        { date: "2026-08-11", name: "HR Dive Email",               completed: false, url: "#" },
+        { date: "2026-08-19", name: "HR Dive Webinar",             completed: false, url: "#" },
+        { date: "2026-11-16", name: "HR Dive Content Syndication", completed: false, url: "#" },
+        { date: "2026-12-01", name: "HR Dive Email",               completed: false, url: "#" },
+      ]
+    },
+    {
+      name: "WorkWeek",
+      asana_url: "#",
+      events: [
+        { date: "2026-06-15", name: "WorkWeek Newsletter",         completed: false, url: "#" },
+      ]
     }
   ];
 
@@ -1006,6 +1025,8 @@
       "HRCI Webinar Series":    "webinar",
       "HRCI Email Campaign":    "email",
       "Web Optimization Roadmap": "webop",
+      "HR Dive":                "hrdive",
+      "WorkWeek":               "workweek",
     };
     const today = new Date();
 
@@ -1113,8 +1134,9 @@
           chip.title = ev.name;
           const type = SOURCE_TYPE[ev._source] || 'webinar';
           chip.classList.add(ev.completed ? 'done' : type);
-          chip.textContent = type === 'webop' ? ev.name
-                           : type === 'webinar' ? 'HRCI Webinar' : 'HRCI Email';
+          chip.textContent = type === 'webinar' ? 'HRCI Webinar'
+                           : type === 'email'   ? 'HRCI Email'
+                           : ev.name;
           cell.insertBefore(chip, numEl);
         });
         if (dayEvts.length > maxShow) {
@@ -1148,6 +1170,8 @@
       <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pi-violet)"></div>HRCI Webinar</div>
       <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pi-blue)"></div>HRCI Email</div>
       <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pi-purple)"></div>Web Optimization</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--pi-red)"></div>HR Dive</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#8A4FD0"></div>WorkWeek</div>
       <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#B0B0B0"></div>Completed</div>`;
     document.querySelector('.cal-section').appendChild(legend);
   })();

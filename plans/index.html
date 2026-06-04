@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PI Plans & Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,wght@0,400;0,500;1,400&family=Roboto:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* PI Brand tokens — from PI Website Blocks Q2 / Brand Guidelines */
+    --pi-red: #EF3340;          /* accent only — dots, lines, emphasis */
+    --pi-purple: #24133E;       /* primary dark — headlines, dark sections */
+    --pi-violet: #5000A8;       /* sparing secondary accent */
+    --pi-blue: #0092C8;         /* links, callouts, data viz */
+    --pi-white: #FFFFFF;
+    --pi-offwhite: #FFFDF8;
+    --pi-dash-gray: #F2F1F3;
+    --pi-black: #000000;
+
+    /* Semantic surfaces */
+    --pi-bg: var(--pi-offwhite);
+    --pi-surface: var(--pi-white);
+    --pi-ink: var(--pi-purple);
+    --pi-ink-2: #3a2a52;
+    --pi-ink-3: #6b5e7d;
+    --pi-line: #e3dfe8;
+    --pi-line-2: #efebf2;
+    --pi-mute: var(--pi-dash-gray);
+    --pi-mute-2: #e7e5ea;
+    --pi-accent: var(--pi-red);
+
+    /* Type */
+    --font-serif: 'Roboto Serif', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Roboto', Arial, sans-serif;
+    --font-mono: 'Roboto Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+    /* Spacing — 8pt base */
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+    --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+    --radius: 4px;
+    --radius-lg: 8px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--pi-bg);
+    color: var(--pi-black);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 var(--s-8); }
+  @media (max-width: 720px) { .container { padding: 0 var(--s-5); } }
+
+  /* ─── Type helpers ─── */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--pi-ink-3);
+  }
+  .eyebrow.accent { color: var(--pi-red); }
+  .h1 { font-family: var(--font-serif); font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; color: var(--pi-purple); }
+  .h2 { font-family: var(--font-serif); font-size: 40px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.12; color: var(--pi-purple); }
+  .h3 { font-family: var(--font-serif); font-size: 28px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.18; color: var(--pi-purple); }
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--pi-ink-3);
+  }
+
+  /* ─── Hero ─── */
+  .hero { text-align: center; padding: var(--s-9) var(--s-5) var(--s-4); max-width: 760px; margin: 0 auto; }
+  .hero .eyebrow { margin-bottom: var(--s-4); }
+  .hero h1 { font-size: clamp(34px, 5vw, 52px); margin-bottom: var(--s-4); }
+  .hero p { font-size: 18px; line-height: 1.55; color: var(--pi-ink-3); max-width: 560px; margin: 0 auto; }
+  .hero-cta { display: inline-block; margin-top: var(--s-6); padding: var(--s-3) var(--s-7); background: var(--pi-ink); color: var(--pi-bg); font-family: var(--font-sans); font-weight: 500; font-size: 14px; border-radius: var(--radius); text-decoration: none; transition: opacity 0.15s; }
+  .hero-cta:hover { opacity: 0.9; }
+
+
+  /* ─── Pricing cards ─── */
+  .cards-section { padding: var(--s-4) 0 var(--s-9); }
+  .cards-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s-5); align-items: stretch; }
+  @media (max-width: 840px) { .cards-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; } }
+
+  .card {
+    background: var(--pi-surface);
+    border: 1px solid var(--pi-line);
+    border-radius: var(--radius-lg);
+    padding: var(--s-6);
+    display: flex; flex-direction: column; gap: var(--s-5);
+    position: relative;
+  }
+  .card.featured { background: var(--pi-ink); border-color: var(--pi-ink); color: var(--pi-bg); }
+
+  .badge {
+    position: absolute; top: -12px; left: var(--s-6);
+    background: var(--pi-accent); color: #fff;
+    font-family: var(--font-mono); font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 4px 10px; border-radius: var(--radius);
+  }
+
+  .card-head .eyebrow { margin-bottom: var(--s-2); }
+  .card.featured .card-head .eyebrow { color: rgba(255,253,248,0.6); }
+  .card-name { font-family: var(--font-sans); font-size: 20px; font-weight: 600; letter-spacing: -0.01em; color: var(--pi-purple); }
+  .card.featured .card-name { color: var(--pi-bg); }
+  .card-desc { font-size: 14px; line-height: 1.5; color: var(--pi-ink-3); margin-top: var(--s-2); }
+  .card.featured .card-desc { color: rgba(255,253,248,0.7); }
+
+  .price-block { display: flex; flex-direction: column; gap: 2px; }
+  .price-line { display: flex; align-items: baseline; gap: var(--s-2); }
+  .price-amount { font-family: var(--font-sans); font-size: 40px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: var(--pi-purple); }
+  .card.featured .price-amount { color: var(--pi-bg); }
+  .price-period { font-size: 14px; color: var(--pi-ink-3); }
+  .card.featured .price-period { color: rgba(255,253,248,0.7); }
+  .price-qualifier { font-family: var(--font-mono); font-size: 11px; color: var(--pi-ink-3); margin-top: var(--s-2); }
+  .card.featured .price-qualifier { color: rgba(255,253,248,0.6); }
+
+  .card-cta {
+    display: block; width: 100%;
+    padding: var(--s-3) var(--s-5);
+    border-radius: var(--radius);
+    font-family: var(--font-sans); font-size: 14px; font-weight: 500;
+    text-align: center; text-decoration: none; cursor: pointer;
+    border: 1px solid var(--pi-ink);
+    background: var(--pi-ink); color: var(--pi-bg);
+    transition: opacity 0.15s;
+  }
+  .card-cta:hover { opacity: 0.88; }
+  .card.featured .card-cta { background: var(--pi-bg); color: var(--pi-ink); border-color: var(--pi-bg); }
+
+  .card-divider { height: 1px; background: var(--pi-line-2); }
+  .card.featured .card-divider { background: rgba(255,253,248,0.15); }
+
+  .features-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pi-ink-3); }
+  .card.featured .features-label { color: rgba(255,253,248,0.6); }
+
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: var(--s-3); flex: 1; }
+  .feature-list li { display: flex; gap: var(--s-3); align-items: flex-start; font-size: 14px; line-height: 1.4; color: var(--pi-ink-2); }
+  .card.featured .feature-list li { color: rgba(255,253,248,0.92); }
+  .feature-list li .chk { font-family: var(--font-mono); color: var(--pi-accent); flex-shrink: 0; }
+  .card.featured .feature-list li .chk { color: var(--pi-bg); }
+
+  .missing-note { font-size: 12px; font-style: italic; color: var(--pi-ink-3); padding-top: var(--s-3); border-top: 1px dashed var(--pi-line); }
+  .card.featured .missing-note { color: rgba(255,253,248,0.55); border-top-color: rgba(255,253,248,0.15); }
+
+  /* ─── Section scaffolding ─── */
+  .section { padding: var(--s-9) 0; }
+  .section-head { margin-bottom: var(--s-7); }
+  .section-head.center { text-align: center; }
+  .section-head .eyebrow { margin-bottom: var(--s-3); }
+  .section-head p { color: var(--pi-ink-3); font-size: 16px; margin-top: var(--s-3); }
+
+  /* ─── Comparison table ─── */
+  .comparison-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .comparison-table thead th { padding: var(--s-4) var(--s-3); border-bottom: 1px solid var(--pi-ink); font-weight: 600; color: var(--pi-purple); text-align: center; width: 18%; }
+  .comparison-table thead th:first-child { text-align: left; width: 46%; }
+  .comparison-table tbody td { padding: var(--s-4) var(--s-3); border-bottom: 1px solid var(--pi-line-2); text-align: center; color: var(--pi-ink-2); }
+  .comparison-table tbody td:first-child { text-align: left; }
+  .comparison-table .col-featured { background: var(--pi-mute); }
+  .comparison-table .category-row td { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pi-ink-3); padding-top: var(--s-6); border-bottom: 1px solid var(--pi-line); background: transparent; }
+  .tbl-check { font-family: var(--font-mono); color: var(--pi-accent); font-size: 14px; }
+  .tbl-x { font-family: var(--font-mono); color: var(--pi-line); font-size: 14px; }
+
+  /* ─── Social proof ─── */
+  .social-proof { text-align: center; }
+  .logos-row { display: flex; justify-content: center; align-items: center; gap: var(--s-7); flex-wrap: wrap; margin-bottom: var(--s-8); }
+  .logo-placeholder { width: 120px; height: 40px; background: var(--pi-mute); border-radius: var(--radius); display: grid; place-items: center; font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--pi-ink-3); }
+  .stat-row { display: flex; justify-content: center; gap: var(--s-9); flex-wrap: wrap; }
+  .stat-item { text-align: center; }
+  .stat-number { font-family: var(--font-sans); font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: var(--pi-purple); }
+  .stat-label { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--pi-ink-3); margin-top: var(--s-3); }
+
+  /* ─── Every plan includes ─── */
+  .includes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: var(--s-5); }
+  .include-item { background: var(--pi-surface); border: 1px solid var(--pi-line); border-radius: var(--radius-lg); padding: var(--s-6); }
+  .include-accent { width: 24px; height: 3px; background: var(--pi-accent); border-radius: 2px; margin-bottom: var(--s-4); }
+  .include-item h4 { font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--pi-purple); margin-bottom: var(--s-2); }
+  .include-item p { font-size: 13px; color: var(--pi-ink-3); line-height: 1.45; }
+
+  /* ─── FAQ ─── */
+  .faq-wrap { max-width: 760px; margin: 0 auto; }
+  .faq-item { border-bottom: 1px solid var(--pi-line); padding: var(--s-5) 0; }
+  .faq-q { font-size: 16px; font-weight: 600; color: var(--pi-purple); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--s-4); }
+  .faq-q::after { content: '+'; font-family: var(--font-mono); font-size: 20px; color: var(--pi-accent); font-weight: 400; line-height: 1; }
+  .faq-a { font-size: 14px; color: var(--pi-ink-2); margin-top: var(--s-3); line-height: 1.65; display: none; }
+  .faq-item.open .faq-a { display: block; }
+  .faq-item.open .faq-q::after { content: '−'; }
+
+  /* ─── Bottom CTA ─── */
+  .bottom-cta { background: var(--pi-ink); border-radius: var(--radius-lg); text-align: center; padding: var(--s-9) var(--s-6); margin: var(--s-9) 0; }
+  .bottom-cta h2 { color: var(--pi-bg); margin-bottom: var(--s-3); }
+  .bottom-cta p { color: rgba(255,253,248,0.7); font-size: 16px; margin-bottom: var(--s-6); }
+  .bottom-cta a { display: inline-block; padding: var(--s-3) var(--s-7); background: var(--pi-bg); color: var(--pi-ink); font-family: var(--font-sans); font-weight: 500; font-size: 14px; border-radius: var(--radius); text-decoration: none; transition: opacity 0.15s; }
+  .bottom-cta a:hover { opacity: 0.9; }
+
+  /* ─── Workshop band (services — accelerant, not a tier) ─── */
+  .workshop-band { background: var(--pi-mute); border-radius: var(--radius-lg); padding: var(--s-7); display: flex; align-items: center; justify-content: space-between; gap: var(--s-7); flex-wrap: wrap; }
+  .workshop-copy { flex: 1 1 420px; max-width: 620px; }
+  .workshop-copy .eyebrow { margin-bottom: var(--s-3); }
+  .workshop-copy h3 { margin-bottom: var(--s-3); }
+  .workshop-copy p { font-size: 15px; line-height: 1.6; color: var(--pi-ink-2); margin-bottom: var(--s-5); }
+  .btn-ghost { display: inline-block; padding: var(--s-3) var(--s-5); border: 1px solid var(--pi-ink); border-radius: var(--radius); background: transparent; color: var(--pi-ink); font-family: var(--font-sans); font-size: 14px; font-weight: 500; text-decoration: none; transition: background 0.15s; }
+  .btn-ghost:hover { background: rgba(36,19,62,0.04); }
+  .workshop-meta { display: flex; flex-direction: column; gap: var(--s-4); flex: 0 0 auto; }
+  .workshop-meta .meta-row { display: flex; flex-direction: column; gap: 2px; }
+  .workshop-meta .meta-k { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pi-ink-3); }
+  .workshop-meta .meta-v { font-size: 14px; color: var(--pi-ink-2); font-weight: 500; }
+  @media (max-width: 720px) { .workshop-band { padding: var(--s-6); } }
+
+  /* ─── Headcount scale calculator (design P-03 slider) + scale strip ─── */
+  .pricing-controls { text-align: center; margin-bottom: var(--s-7); }
+  .scale-strip { font-size: 14px; color: var(--pi-ink-2); margin-bottom: var(--s-4); margin-top: var(--s-3); }
+  .scale-strip strong { color: var(--pi-purple); font-weight: 600; }
+  .scale-calc { max-width: 480px; margin: 0 auto; text-align: left; }
+  .scale-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--s-3); }
+  .scale-k { font-family: var(--font-mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pi-ink-3); }
+  .scale-v { font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--pi-purple); }
+  .band-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 3px; background: var(--pi-mute); background-image: linear-gradient(var(--pi-ink), var(--pi-ink)); background-size: var(--pct, 0%) 100%; background-repeat: no-repeat; cursor: pointer; margin: 0; }
+  .band-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--pi-accent); border: none; box-shadow: 0 1px 4px rgba(36,19,62,0.28); cursor: pointer; }
+  .band-slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--pi-accent); border: none; box-shadow: 0 1px 4px rgba(36,19,62,0.28); cursor: pointer; }
+  .band-slider::-moz-range-track { height: 6px; border-radius: 3px; background: var(--pi-mute); }
+  .band-slider::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--pi-ink); }
+  .band-slider:focus-visible { outline: 2px solid var(--pi-violet); outline-offset: 4px; }
+  .scale-ticks { display: flex; justify-content: space-between; margin-top: var(--s-2); font-family: var(--font-mono); font-size: 10px; color: var(--pi-ink-3); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="eyebrow">Plans &amp; pricing</p>
+  <h1 class="h1">Choose the plan that fits how you build great teams</h1>
+  <p>From bad hires to bad managers, "gut-feel" is expensive. Inject behavioral intelligence into the moments that matter across the entire employee lifecycle.</p>
+  <a class="hero-cta" href="#">Get Started</a>
+</section>
+
+<!-- PRICING CARDS -->
+<section class="cards-section">
+  <div class="container">
+    <div class="pricing-controls">
+      <p class="scale-strip">Plans are priced by <strong>headcount</strong>. Your price scales as your company grows.</p>
+      <div class="scale-calc">
+        <div class="scale-row">
+          <span class="scale-k">Company size</span>
+          <span class="scale-v" id="bandReadout">Up to 50 employees</span>
+        </div>
+        <input type="range" class="band-slider" id="bandSlider" min="0" max="5" step="1" value="0"
+               oninput="onBandSlide(this)" aria-label="Company size in employees">
+        <div class="scale-ticks">
+          <span>50</span><span>100</span><span>200</span><span>300</span><span>400</span><span>400+</span>
+        </div>
+      </div>
+    </div>
+    <div class="cards-grid">
+
+      <!-- Tier 1 -->
+      <div class="card" data-tier="t1">
+        <div class="card-head">
+          <p class="eyebrow">People</p>
+          <div class="card-name">Hire the right people, develop and keep them.</div>
+          <p class="card-desc">Make confident hiring calls, then give every manager the behavioral insight to coach, engage, and retain the people they bring on.</p>
+        </div>
+        <div class="price-block">
+          <div class="price-line"><span class="price-amount">$8,500</span><span class="price-period">/year</span></div>
+          <div class="price-qualifier">Annually for up to 50 employees</div>
+        </div>
+        <a class="card-cta" href="#">Request a demo</a>
+        <div class="card-divider"></div>
+        <p class="features-label">What's included</p>
+        <ul class="feature-list">
+          <li><span class="chk">✓</span><span>Unlimited behavioral assessments</span></li>
+          <li><span class="chk">✓</span><span>Candidate-to-job match scoring</span></li>
+          <li><span class="chk">✓</span><span>Interview guides per candidate</span></li>
+          <li><span class="chk">✓</span><span>Personalized coaching for every employee</span></li>
+          <li><span class="chk">✓</span><span>Manager-employee relationship insights</span></li>
+          <li><span class="chk">✓</span><span>Strengths &amp; development areas</span></li>
+        </ul>
+        <p class="missing-note">Does not include team design analytics, engagement surveys, or performance tools</p>
+      </div>
+
+      <!-- Tier 2 — featured -->
+      <div class="card featured" data-tier="t2">
+        <div class="badge">Most popular</div>
+        <div class="card-head">
+          <p class="eyebrow">Teams</p>
+          <div class="card-name">Turn great hires into teams that perform.</div>
+          <p class="card-desc">Everything in People, plus the tools to design balanced teams, work through friction, and align how people work to what the business needs.</p>
+        </div>
+        <div class="price-block">
+          <div class="price-line"><span class="price-amount">$12,800</span><span class="price-period">/year</span></div>
+          <div class="price-qualifier">Annually for up to 50 employees</div>
+        </div>
+        <a class="card-cta" href="#">Request a demo</a>
+        <div class="card-divider"></div>
+        <p class="features-label">Everything in Essentials, plus</p>
+        <ul class="feature-list">
+          <li><span class="chk">✓</span><span>Team strengths &amp; caution areas</span></li>
+          <li><span class="chk">✓</span><span>Team type identification</span></li>
+          <li><span class="chk">✓</span><span>Alignment &amp; execution action plans</span></li>
+          <li><span class="chk">✓</span><span>Team composition recommendations</span></li>
+          <li><span class="chk">✓</span><span>Strategic hiring for team gaps</span></li>
+        </ul>
+        <p class="missing-note">Does not include engagement surveys or performance management tools</p>
+      </div>
+
+      <!-- Tier 3 -->
+      <div class="card" data-tier="t3">
+        <div class="card-head">
+          <p class="eyebrow">Organization</p>
+          <div class="card-name">Run your whole people strategy on one source of truth.</div>
+          <p class="card-desc">The full PI suite, so every talent decision across the organization runs on the same behavioral data.</p>
+        </div>
+        <div class="price-block">
+          <div class="price-line"><span class="price-amount">$21,700</span><span class="price-period">/year</span></div>
+          <div class="price-qualifier">Annually for up to 50 employees</div>
+        </div>
+        <a class="card-cta" href="#">Request a demo</a>
+        <div class="card-divider"></div>
+        <p class="features-label">Everything in Professional, plus</p>
+        <ul class="feature-list">
+          <li><span class="chk">✓</span><span>Science-backed engagement surveys</span></li>
+          <li><span class="chk">✓</span><span>Real-time engagement insights &amp; actions</span></li>
+          <li><span class="chk">✓</span><span>Organizational diagnostics</span></li>
+          <li><span class="chk">✓</span><span>Performance management workflows</span></li>
+          <li><span class="chk">✓</span><span>Goal tracking &amp; 1-on-1 tools</span></li>
+          <li><span class="chk">✓</span><span>Behavioral insights across the entire employee lifecycle</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WORKSHOPS (services — accelerant on the platform, not a 4th tier) -->
+<section class="section">
+  <div class="container">
+    <div class="workshop-band">
+      <div class="workshop-copy">
+        <p class="eyebrow accent">Expert-led workshops</p>
+        <h3 class="h3">Go further with the PI Professional Certification</h3>
+        <p>A flagship workshop series, facilitated 1:1 by a PI expert, that helps HR leaders and executives put behavioral insights to work across the entire employee lifecycle. Walk away with a clear game plan for your organization — and PI's highest-tier certification.</p>
+        <a class="btn-ghost" href="#">Explore the certification</a>
+      </div>
+      <div class="workshop-meta">
+        <div class="meta-row"><span class="meta-k">Format</span><span class="meta-v">5-module series · in person or virtual</span></div>
+        <div class="meta-row"><span class="meta-k">Built for</span><span class="meta-v">HR leaders &amp; executives</span></div>
+        <div class="meta-row"><span class="meta-k">Credential</span><span class="meta-v">PI Professional Certification</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Compare</p>
+      <h2 class="h2">Compare plans in detail</h2>
+    </div>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>People</th>
+          <th class="col-featured">Teams</th>
+          <th>Organization</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="category-row"><td>Hiring &amp; Assessment</td><td></td><td class="col-featured"></td><td></td></tr>
+        <tr><td>Unlimited PI Behavioral Assessments</td><td><span class="tbl-check">✓</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>PI Cognitive Assessments</td><td><span class="tbl-check">✓</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Job target &amp; candidate matching</td><td><span class="tbl-check">✓</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Personalized interview guides</td><td><span class="tbl-check">✓</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+
+        <tr class="category-row"><td>Leadership &amp; Coaching</td><td></td><td class="col-featured"></td><td></td></tr>
+        <tr><td>Employee behavioral profiles</td><td><span class="tbl-check">✓</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Personalized coaching tips</td><td><span class="tbl-check">✓</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Manager-report relationship insights</td><td><span class="tbl-check">✓</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+
+        <tr class="category-row"><td>Team Strategy</td><td></td><td class="col-featured"></td><td></td></tr>
+        <tr><td>Team type &amp; dynamics analysis</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Team strengths &amp; caution areas</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Alignment &amp; execution action plans</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-check">✓</span></td><td><span class="tbl-check">✓</span></td></tr>
+
+        <tr class="category-row"><td>Engagement &amp; Diagnostics</td><td></td><td class="col-featured"></td><td></td></tr>
+        <tr><td>Anonymous engagement surveys</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-x">—</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Real-time engagement insights</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-x">—</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Organizational diagnostics</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-x">—</span></td><td><span class="tbl-check">✓</span></td></tr>
+
+        <tr class="category-row"><td>Performance Management</td><td></td><td class="col-featured"></td><td></td></tr>
+        <tr><td>Goal setting &amp; tracking</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-x">—</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>1-on-1 meeting tools</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-x">—</span></td><td><span class="tbl-check">✓</span></td></tr>
+        <tr><td>Performance review workflows</td><td><span class="tbl-x">—</span></td><td class="col-featured"><span class="tbl-x">—</span></td><td><span class="tbl-check">✓</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="section">
+  <div class="container social-proof">
+    <div class="section-head center">
+      <p class="eyebrow accent">Trusted globally</p>
+      <h2 class="h2">Trusted by 10,000+ companies worldwide</h2>
+      <p>From startups to the Fortune 500, teams use PI to build better workplaces.</p>
+    </div>
+    <div class="logos-row">
+      <div class="logo-placeholder">Logo 1</div>
+      <div class="logo-placeholder">Logo 2</div>
+      <div class="logo-placeholder">Logo 3</div>
+      <div class="logo-placeholder">Logo 4</div>
+      <div class="logo-placeholder">Logo 5</div>
+      <div class="logo-placeholder">Logo 6</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-item"><div class="stat-number">10,000+</div><div class="stat-label">Companies</div></div>
+      <div class="stat-item"><div class="stat-number">36M+</div><div class="stat-label">Assessments taken</div></div>
+      <div class="stat-item"><div class="stat-number">60+</div><div class="stat-label">Years of science</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EVERY PLAN INCLUDES -->
+<section class="section">
+  <div class="container">
+    <div class="section-head center">
+      <h2 class="h2">Every plan includes</h2>
+    </div>
+    <div class="includes-grid">
+      <div class="include-item"><div class="include-accent"></div><h4>Unlimited users</h4><p>No per-seat fees, ever</p></div>
+      <div class="include-item"><div class="include-accent"></div><h4>24/7 support</h4><p>Help when you need it</p></div>
+      <div class="include-item"><div class="include-accent"></div><h4>Onboarding &amp; training</h4><p>Get your team up to speed</p></div>
+      <div class="include-item"><div class="include-accent"></div><h4>Privacy &amp; permissions</h4><p>Enterprise-grade controls</p></div>
+      <div class="include-item"><div class="include-accent"></div><h4>Expert network</h4><p>Access to expert consultants</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head center">
+      <p class="eyebrow">FAQ</p>
+      <h2 class="h2">Frequently asked questions</h2>
+    </div>
+    <div class="faq-wrap">
+      <div class="faq-item open">
+        <div class="faq-q" onclick="toggleFaq(this)">How much does The Predictive Index cost?</div>
+        <div class="faq-a">PI plans start at $8,500/year and are priced by headcount, beginning at 50 employees. Your price scales with your company size and the modules you choose. All plans include unlimited users and assessments — there are no per-seat fees.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What's included in each PI plan?</div>
+        <div class="faq-a">Every plan includes unlimited behavioral assessments, candidate-to-job matching, and personalized interview guides. The Hire + Inspire plan adds manager coaching and relationship insights. The Professional tier adds team design and strategy tools. The Full Platform includes everything — engagement surveys, diagnostics, and performance management.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I change plans later?</div>
+        <div class="faq-a">Yes. You can upgrade your plan at any time, and our team will help you transition smoothly. Many customers start with Hire + Inspire and expand as their behavioral insights practice matures.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What's the difference between Hire + Inspire and the Full Platform?</div>
+        <div class="faq-a">Hire + Inspire focuses on making better hiring decisions and giving managers coaching tools. The Full Platform adds team design analytics, engagement surveys, organizational diagnostics, and performance management — everything you need for behavioral insights across the entire employee lifecycle.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Do I need to pay per user or per assessment?</div>
+        <div class="faq-a">No. All PI plans include unlimited users and unlimited assessments. Your price is based on company size and the modules you choose, not usage.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How does pricing work for larger companies?</div>
+        <div class="faq-a">PI pricing is based on headcount, starting at 50 employees, and scales as your organization grows. Use the company-size selector near the top of the page to see starting prices for your band. For organizations over 400 employees, we'll tailor a quote to your specific needs.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Do you offer training or workshops?</div>
+        <div class="faq-a">Yes. Every plan includes onboarding and training. For teams that want to go deeper, PI also offers expert-led workshops — including The Predictive Index Professional Certification, a facilitated 5-module series for HR leaders and executives. It's an optional way to build a clear game plan and apply behavioral insights across the entire employee lifecycle, delivered in person or virtually.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="container">
+  <div class="bottom-cta">
+    <h2 class="h2">Not sure which plan is right for you?</h2>
+    <p>Our team can help you find the right fit for your goals and budget.</p>
+    <a href="#">Talk to an expert</a>
+  </div>
+</section>
+
+<script>
+const PRICING = {
+  '50':     { read: 'Up to 50 employees',  label: 'up to 50 employees', t1: '$8,500',  t2: '$12,800', t3: '$21,700' },
+  '100':    { read: '51–100 employees',    label: '51–100 employees',   t1: '$14,500', t2: '$21,800', t3: '$36,000' },
+  '200':    { read: '101–200 employees',   label: '101–200 employees',  t1: '$20,000', t2: '$30,200', t3: '$41,300' },
+  '300':    { read: '201–300 employees',   label: '201–300 employees',  t1: '$21,800', t2: '$32,900', t3: '$44,800' },
+  '400':    { read: '301–400 employees',   label: '301–400 employees',  t1: '$26,000', t2: '$39,200', t3: '$53,200' },
+  'custom': { read: 'Over 400 employees',  label: 'over 400 employees', t1: 'Custom',  t2: 'Custom',  t3: 'Custom', custom: true }
+};
+const BANDS = ['50', '100', '200', '300', '400', 'custom'];
+
+function applyBand(key) {
+  const d = PRICING[key];
+  document.querySelectorAll('.card[data-tier]').forEach(card => {
+    const t = card.getAttribute('data-tier');
+    const amt = card.querySelector('.price-amount');
+    const per = card.querySelector('.price-period');
+    const qual = card.querySelector('.price-qualifier');
+    amt.textContent = d[t];
+    if (d.custom) {
+      per.style.display = 'none';
+      qual.textContent = 'Tailored to your organization — talk to our team.';
+    } else {
+      per.style.display = '';
+      qual.textContent = 'Annually for ' + d.label;
+    }
+  });
+}
+
+function onBandSlide(input) {
+  const i = parseInt(input.value, 10);
+  const key = BANDS[i];
+  input.style.setProperty('--pct', (i / 5 * 100) + '%');
+  document.getElementById('bandReadout').textContent = PRICING[key].read;
+  applyBand(key);
+}
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+</script>
+
+</body>
+</html>

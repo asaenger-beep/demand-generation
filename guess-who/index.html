@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess the Profile — The Predictive Index</title>
+  <style>
+    /* ── PI Brand Fonts (official TTFs) ── */
+    @font-face { font-family:"Roboto"; src:url("../fonts/Roboto-Light.ttf") format("truetype"); font-weight:300; font-style:normal; font-display:swap; }
+    @font-face { font-family:"Roboto"; src:url("../fonts/Roboto-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+    @font-face { font-family:"Roboto"; src:url("../fonts/Roboto-Medium.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
+    @font-face { font-family:"Roboto"; src:url("../fonts/Roboto-Bold.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:swap; }
+    @font-face { font-family:"Roboto Serif"; src:url("../fonts/RobotoSerif-Medium.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+    :root {
+      --pi-purple:#2E1F44; --pi-violet:#5000A8; --pi-blue:#0092C8; --pi-red:#EF3340;
+      --pi-offwhite:#FFFDF8; --pi-black:#000000; --pi-border:#D9D9D9; --pi-card-bg:#FFFFFF;
+      --pi-muted:#5C5C5C;
+      --g-analytical:#0092C8;  --g-analytical-bg:#E6F4FA;
+      --g-social:#5000A8;      --g-social-bg:#EDE6F7;
+      --g-stabilizing:#2E1F44; --g-stabilizing-bg:#ECEAF0;
+      --g-persistent:#4527A0;  --g-persistent-bg:#EAE7F6;
+      --radius:8px;
+      --shadow:0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.07);
+      --shadow-hover:0 4px 10px rgba(0,0,0,.10), 0 14px 30px rgba(0,0,0,.10);
+    }
+
+    body { background:var(--pi-offwhite); color:var(--pi-black); font-family:"Roboto",system-ui,sans-serif; font-weight:400; min-height:100vh; }
+
+    /* ── Header ── */
+    header { background:var(--pi-purple); padding:0 clamp(1.5rem,5vw,4rem); }
+    .header-inner { max-width:1240px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:1rem; height:72px; }
+    .logo-link { display:flex; align-items:center; }
+    .logo-link img { height:28px; width:auto; display:block; }
+    .back-link { font-size:.85rem; color:rgba(255,255,255,.75); text-decoration:none; display:inline-flex; align-items:center; gap:.4rem; transition:color .15s; }
+    .back-link:hover { color:#fff; }
+    .back-link svg { width:14px; height:14px; }
+
+    /* ── Hero ── */
+    .hero { max-width:1240px; margin:2.5rem auto 1.25rem; padding:0 clamp(1.5rem,5vw,4rem); }
+    .hero h1 { font-family:"Roboto Serif",Georgia,serif; font-weight:500; font-size:clamp(1.9rem,4vw,2.6rem); line-height:1.15; letter-spacing:-.01em; color:var(--pi-black); margin-bottom:.5rem; }
+    .hero p { font-size:1.0625rem; color:var(--pi-violet); max-width:760px; line-height:1.55; }
+
+    /* ── How to play ── */
+    details.howto { max-width:1240px; margin:0 auto 1.5rem; padding:0 clamp(1.5rem,5vw,4rem); }
+    details.howto > summary { cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:.5rem; font-weight:500; font-size:.95rem; color:var(--pi-violet); padding:.4rem 0; }
+    details.howto > summary::-webkit-details-marker { display:none; }
+    details.howto > summary .chev { transition:transform .2s; }
+    details.howto[open] > summary .chev { transform:rotate(90deg); }
+    .howto-body { background:var(--pi-card-bg); border:1px solid var(--pi-border); border-radius:var(--radius); padding:1.25rem 1.5rem; margin-top:.5rem; box-shadow:var(--shadow); }
+    .howto-body ol { margin:0; padding-left:1.2rem; line-height:1.7; color:#1a1a1a; }
+    .howto-body li { margin-bottom:.35rem; }
+    .howto-body strong { font-weight:500; }
+
+    /* ── Layout ── */
+    .game { max-width:1240px; margin:0 auto 4rem; padding:0 clamp(1.5rem,5vw,4rem); display:grid; grid-template-columns:1fr 380px; gap:1.75rem; align-items:start; }
+    @media (max-width:980px){ .game { grid-template-columns:1fr; } }
+
+    /* ── Statbar ── */
+    .statbar { display:flex; gap:.75rem; flex-wrap:wrap; margin-bottom:1.1rem; }
+    .stat { background:var(--pi-card-bg); border:1px solid var(--pi-border); border-radius:var(--radius); padding:.6rem .9rem; min-width:92px; box-shadow:var(--shadow); }
+    .stat .num { font-size:1.4rem; font-weight:500; line-height:1; color:var(--pi-purple); }
+    .stat.best .num { color:var(--pi-violet); }
+    .stat .lbl { font-size:.72rem; font-weight:400; color:var(--pi-muted); text-transform:uppercase; letter-spacing:.04em; margin-top:.25rem; }
+
+    /* ── Board ── */
+    .board { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.85rem; }
+    .tile { perspective:1000px; aspect-ratio:3/3.5; cursor:pointer; }
+    .tile-inner { position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.2,.7,.2,1); transform-style:preserve-3d; }
+    .tile.down .tile-inner { transform:rotateY(180deg); }
+    .tile-face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow); }
+    .tile-front { background:var(--pi-card-bg); border:1px solid var(--pi-border); }
+    .tile:hover .tile-front { box-shadow:var(--shadow-hover); }
+    .tile-accent { height:6px; width:100%; flex:0 0 auto; }
+    .tile-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:.5rem .5rem .55rem; text-align:center; gap:.25rem; min-height:0; }
+    .picon { width:100%; flex:1; display:flex; align-items:center; justify-content:center; min-height:0; }
+    .picon img { width:100%; height:100%; object-fit:contain; display:block; }
+    .tile-group { font-size:.66rem; font-weight:400; text-transform:uppercase; letter-spacing:.06em; color:var(--pi-muted); flex:0 0 auto; }
+    /* Back of tile (flipped down) */
+    .tile-back { background:var(--pi-purple); transform:rotateY(180deg); border:1px solid var(--pi-purple); align-items:center; justify-content:center; gap:.45rem; padding:.6rem; }
+    .tile-back img { height:20px; width:auto; opacity:.9; }
+    .tile-back .ruled-name { color:#fff; font-weight:500; font-size:1rem; line-height:1.15; }
+    .tile-back .ruled { font-size:.66rem; color:rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:.09em; }
+    .tile.wrong .tile-back { background:#3a1530; border-color:#3a1530; }
+    .tile.wrong .tile-back .ruled { color:#ffb3b8; }
+
+    /* ── Side panel ── */
+    .panel { display:flex; flex-direction:column; gap:1.1rem; position:sticky; top:1rem; }
+    .card { background:var(--pi-card-bg); border:1px solid var(--pi-border); border-radius:var(--radius); box-shadow:var(--shadow); padding:1.15rem 1.15rem 1.25rem; }
+    .card h2 { font-size:1.02rem; font-weight:500; color:var(--pi-black); margin-bottom:.15rem; }
+    .card .sub { font-size:.82rem; color:var(--pi-muted); margin-bottom:.85rem; line-height:1.45; }
+
+    .btn { font-family:"Roboto",sans-serif; font-weight:500; font-size:.92rem; border:none; border-radius:var(--radius); padding:.7rem 1rem; cursor:pointer; transition:opacity .15s, transform .1s; }
+    .btn:active { transform:translateY(1px); }
+    .btn-primary { background:var(--pi-violet); color:#fff; width:100%; }
+    .btn-primary:hover { opacity:.92; }
+    .btn-ghost { background:transparent; color:var(--pi-violet); border:1px solid var(--pi-violet); width:100%; }
+    .btn-ghost:hover { background:rgba(80,0,168,.06); }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+
+    /* Ask-your-own input */
+    .ask-row { display:flex; gap:.5rem; }
+    .ask-row input { flex:1; min-width:0; font-family:"Roboto",sans-serif; font-size:.9rem; padding:.65rem .7rem; border:1px solid var(--pi-border); border-radius:var(--radius); color:var(--pi-black); }
+    .ask-row input:focus { outline:none; border-color:var(--pi-violet); box-shadow:0 0 0 3px rgba(80,0,168,.12); }
+    .ask-row .btn { width:auto; padding:.65rem 1.1rem; white-space:nowrap; }
+    .ask-note { font-size:.8rem; margin-top:.5rem; line-height:1.4; min-height:1em; }
+    .ask-note.err { color:var(--pi-red); }
+    .ask-note.info { color:var(--pi-muted); }
+    .ai-status { font-size:.74rem; color:var(--pi-muted); margin-top:.45rem; line-height:1.4; }
+    .ai-status b { color:var(--pi-violet); font-weight:500; }
+
+    /* Q&A log */
+    .qa-log { margin-top:.85rem; display:flex; flex-direction:column; gap:.5rem; max-height:260px; overflow-y:auto; padding-right:.25rem; }
+    .qa-log:empty { display:none; }
+    .qa { border:1px solid var(--pi-border); border-radius:var(--radius); padding:.55rem .65rem; background:#FAF8FC; }
+    .qa.fresh { animation:flash .9s ease; }
+    @keyframes flash { 0%{ background:#F0E7FB; } 100%{ background:#FAF8FC; } }
+    .qa-q { font-size:.86rem; line-height:1.35; color:#1a1a1a; }
+    .qa-meta { display:flex; align-items:center; gap:.5rem; margin-top:.4rem; }
+    .ans { font-weight:700; font-size:.72rem; padding:.16rem .5rem; border-radius:999px; letter-spacing:.04em; flex:0 0 auto; }
+    .ans.yes { background:#E1EFE6; color:#1f7a47; }
+    .ans.no  { background:#FDEAEB; color:#C4202C; }
+    .qa-dim { font-size:.72rem; color:var(--pi-muted); }
+    .qa-dim .ai { color:var(--pi-violet); font-weight:500; }
+
+    /* Question bank suggestions */
+    details.bank { margin-top:.9rem; border-top:1px solid var(--pi-border); padding-top:.7rem; }
+    details.bank summary { cursor:pointer; list-style:none; font-size:.85rem; font-weight:500; color:var(--pi-violet); display:inline-flex; align-items:center; gap:.4rem; }
+    details.bank summary::-webkit-details-marker { display:none; }
+    details.bank summary .chev { transition:transform .2s; }
+    details.bank[open] summary .chev { transform:rotate(90deg); }
+    .bank-list { display:flex; flex-direction:column; gap:.4rem; margin-top:.7rem; max-height:220px; overflow-y:auto; padding-right:.25rem; }
+    .bank-q { text-align:left; background:#fff; border:1px solid var(--pi-border); border-radius:var(--radius); padding:.5rem .6rem; cursor:pointer; font-size:.82rem; line-height:1.3; color:#1a1a1a; transition:border-color .15s, background .15s; }
+    .bank-q:hover:not(:disabled) { border-color:var(--pi-violet); background:#F3ECFB; }
+    .bank-q:disabled { opacity:.45; cursor:default; }
+
+    /* Guess box */
+    .guess-row { display:flex; flex-direction:column; gap:.65rem; }
+    select.guess-select { font-family:"Roboto",sans-serif; font-size:.92rem; padding:.65rem .7rem; border:1px solid var(--pi-border); border-radius:var(--radius); background:#fff; color:var(--pi-black); cursor:pointer; appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%235000A8' stroke-width='1.6'/></svg>"); background-repeat:no-repeat; background-position:right .7rem center; }
+    .feedback { font-size:.85rem; line-height:1.4; min-height:1.2em; }
+    .feedback.miss { color:var(--pi-red); font-weight:500; }
+    .feedback.neutral { color:var(--pi-muted); }
+
+    /* ── Win modal ── */
+    .overlay { position:fixed; inset:0; background:rgba(46,31,68,.55); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:1.25rem; z-index:50; }
+    .overlay.show { display:flex; }
+    .modal { background:var(--pi-offwhite); border-radius:14px; max-width:480px; width:100%; padding:2rem 1.75rem 1.75rem; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.3); position:relative; animation:pop .3s cubic-bezier(.2,.8,.2,1); }
+    @keyframes pop { from { transform:scale(.9); opacity:0; } to { transform:scale(1); opacity:1; } }
+    .modal .eyebrow { font-size:.78rem; font-weight:500; text-transform:uppercase; letter-spacing:.1em; color:var(--pi-violet); }
+    .modal h2 { font-family:"Roboto Serif",Georgia,serif; font-weight:500; font-size:1.8rem; color:var(--pi-black); margin:.3rem 0 .25rem; }
+    .reveal-icon { width:150px; margin:.75rem auto .25rem; }
+    .reveal-icon img { width:100%; height:auto; display:block; }
+    .modal .reveal-group { font-size:.74rem; text-transform:uppercase; letter-spacing:.08em; color:var(--pi-muted); margin-top:0; }
+    .modal .reveal-desc { font-size:.95rem; line-height:1.55; color:#1a1a1a; margin:.7rem auto 1rem; max-width:380px; }
+    .factor-chips { display:flex; gap:.4rem; justify-content:center; flex-wrap:wrap; margin-bottom:1rem; }
+    .fchip { font-size:.72rem; background:#fff; border:1px solid var(--pi-border); border-radius:999px; padding:.28rem .6rem; color:var(--pi-purple); }
+    .fchip b { font-weight:500; }
+    .tips { display:flex; flex-direction:column; gap:.55rem; text-align:left; margin:0 auto 1.1rem; max-width:400px; }
+    .tip { display:flex; flex-direction:column; gap:.15rem; background:#fff; border:1px solid var(--pi-border); border-left:3px solid var(--pi-violet); border-radius:6px; padding:.55rem .7rem; }
+    .tip-caution { border-left-color:var(--pi-red); }
+    .tip-label { font-size:.66rem; font-weight:500; text-transform:uppercase; letter-spacing:.06em; color:var(--pi-muted); }
+    .tip-text { font-size:.86rem; line-height:1.4; color:#1a1a1a; }
+    .newbest { display:none; font-size:.82rem; font-weight:500; color:var(--pi-violet); background:#EDE6F7; border-radius:999px; padding:.35rem .8rem; margin:0 auto 1rem; }
+    .newbest.show { display:inline-block; }
+    .modal .stats-line { font-size:.85rem; color:var(--pi-muted); margin-bottom:1.1rem; }
+    .modal-btns { display:flex; gap:.6rem; }
+    .modal-btns .btn { flex:1; }
+
+    /* Confetti */
+    .confetti { position:fixed; top:-12px; width:9px; height:14px; z-index:60; pointer-events:none; opacity:.95; will-change:transform; }
+    @keyframes fall { to { transform:translateY(106vh) rotate(720deg); opacity:.9; } }
+
+    .footnote { max-width:1240px; margin:0 auto 3rem; padding:0 clamp(1.5rem,5vw,4rem); font-size:.78rem; color:var(--pi-muted); line-height:1.5; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo-link" href="../index.html"><img src="../PI_Logo_White.png" alt="The Predictive Index" /></a>
+    <a class="back-link" href="../index.html">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 6H2M6 2 2 6l4 4"/></svg>
+      Back to hub
+    </a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Guess the Profile</h1>
+  <p>A behavioral spin on the classic board game. We've secretly picked one of the 17 PI Reference Profiles. Type your own yes-or-no questions, flip down the profiles you've ruled out, and lock in your guess when you're ready.</p>
+</section>
+
+<details class="howto">
+  <summary><svg class="chev" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg> How to play</summary>
+  <div class="howto-body">
+    <ol>
+      <li><strong>Ask your own questions.</strong> Type any yes/no question about how the mystery person is wired — the profile answers honestly based on its behavioral drives (Dominance, Extraversion, Patience, Formality). Stuck for words? Browse the question bank for ideas.</li>
+      <li><strong>Narrow it down.</strong> Click any profile on the board to <strong>flip it face-down</strong> once you've ruled it out — just like knocking down the tiles in the real game.</li>
+      <li><strong>Make your guess.</strong> When you think you know who it is, choose them in the guess box and lock it in. Guess right and you win; guess wrong and that tile flips down so you can keep going. Solve it in as few moves as possible to beat your best score!</li>
+    </ol>
+  </div>
+</details>
+
+<div class="game">
+  <!-- Board -->
+  <div>
+    <div class="statbar">
+      <div class="stat"><div class="num" id="stat-q">0</div><div class="lbl">Questions asked</div></div>
+      <div class="stat"><div class="num" id="stat-wrong">0</div><div class="lbl">Wrong guesses</div></div>
+      <div class="stat"><div class="num" id="stat-left">17</div><div class="lbl">Still standing</div></div>
+      <div class="stat best"><div class="num" id="stat-best">—</div><div class="lbl">Best solve</div></div>
+    </div>
+    <div class="board" id="board"></div>
+  </div>
+
+  <!-- Side panel -->
+  <aside class="panel">
+    <div class="card">
+      <h2>Ask a question</h2>
+      <p class="sub">Type any yes/no question and the mystery profile will answer based on its behavioral style.</p>
+      <div class="ask-row">
+        <input type="text" id="q-input" placeholder="e.g. Do you love taking the lead?" autocomplete="off" />
+        <button class="btn btn-primary" id="q-ask">Ask</button>
+      </div>
+      <div class="ask-note" id="ask-note"></div>
+      <div class="ai-status" id="ai-status"></div>
+      <div class="qa-log" id="qa-log"></div>
+
+      <details class="bank">
+        <summary><svg class="chev" width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2l4 4-4 4"/></svg> Need ideas? Browse the question bank</summary>
+        <div class="bank-list" id="bank-list"></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>Lock in your guess</h2>
+      <p class="sub">Think you've got them? Pick a profile and commit.</p>
+      <div class="guess-row">
+        <select class="guess-select" id="guess-select"><option value="">Choose a profile…</option></select>
+        <button class="btn btn-primary" id="guess-btn">Lock in my guess</button>
+        <div class="feedback neutral" id="feedback"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" id="new-game">Start a new game</button>
+  </aside>
+</div>
+
+<p class="footnote">The 17 Reference Profiles are grouped into four behavioral families — Analytical, Social, Stabilizing, and Persistent — based on The Predictive Index's four factors: Dominance (A), Extraversion (B), Patience (C), and Formality (D). Answers in this game are driven by those factors. Icons are the official PI Reference Profile icons. For the full profile descriptions, see your PI software.</p>
+
+<!-- Win modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="eyebrow">You found them!</div>
+    <h2 id="win-title">It's a match</h2>
+    <div class="reveal-icon" id="reveal-icon"></div>
+    <div class="reveal-group" id="reveal-group"></div>
+    <p class="reveal-desc" id="reveal-desc"></p>
+    <div class="factor-chips" id="factor-chips"></div>
+    <div class="tips" id="tips">
+      <div class="tip tip-strength"><span class="tip-label">Strengths</span><span class="tip-text" id="tip-strengths"></span></div>
+      <div class="tip tip-caution"><span class="tip-label">Watch out for</span><span class="tip-text" id="tip-caution"></span></div>
+    </div>
+    <div class="newbest" id="newbest">🏆 New best score!</div>
+    <div class="stats-line" id="win-stats"></div>
+    <div class="modal-btns">
+      <button class="btn btn-primary" id="play-again">Play again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const GROUPS = {
+    Analytical:  { accent:"var(--g-analytical)",  bg:"var(--g-analytical-bg)" },
+    Social:      { accent:"var(--g-social)",      bg:"var(--g-social-bg)" },
+    Stabilizing: { accent:"var(--g-stabilizing)", bg:"var(--g-stabilizing-bg)" },
+    Persistent:  { accent:"var(--g-persistent)",  bg:"var(--g-persistent-bg)" }
+  };
+
+  /* ── Behavioral dimensions (the offline answer engine's traits) ── */
+  const DIMS = {
+    lead:      { label:"Taking charge",        bank:"Are you at your best taking charge and driving straight for the result?" },
+    people:    { label:"Social energy",        bank:"Do you get energized by people — rallying the room and thinking out loud?" },
+    alone:     { label:"Independence",         bank:"Are you happier figuring it out alone than waiting for the team to catch up?" },
+    details:   { label:"Detail & structure",   bank:"Do you love the details — accuracy, structure, and doing it by the book?" },
+    fast:      { label:"Speed & risk",         bank:"Do you move fast and embrace risk, even before you have all the facts?" },
+    harmony:   { label:"Keeping harmony",      bank:"Does keeping everyone in harmony matter more to you than being right?" },
+    routine:   { label:"Steady pace",          bank:"Would you take a steady, predictable rhythm over constant change?" },
+    bigpicture:{ label:"Big-picture strategy", bank:"Are you the big-picture strategist who maps the long game?" },
+    expert:    { label:"Deep expertise",       bank:"Would people call you the go-to expert who masters the fine print?" },
+    reserved:  { label:"Reserved nature",      bank:"Are you more reserved — happy to observe before you speak?" },
+    flexible:  { label:"Flexibility",          bank:"Can you flex your style to fit whatever the moment needs?" },
+    helping:   { label:"Helping others",       bank:"Is supporting and lifting up other people your core driver?" },
+    optimism:  { label:"Optimism & energy",    bank:"Do you lead with enthusiasm and optimism more than with hard data?" },
+    logic:     { label:"Logic & data",         bank:"Do you trust logic and proof over gut feel and relationships?" },
+    intense:   { label:"Intensity",            bank:"Once you commit, are you relentless until it's done?" },
+    unconv:    { label:"Unconventionality",    bank:"Do you like to challenge convention and do things your own way?" }
+  };
+  const ORDER = Object.keys(DIMS);
+
+  /* Keyword lexicon — broad synonyms so most natural phrasings map to a dimension. */
+  const KEYWORDS = {
+    lead:["take charge","taking charge","in charge","take the lead","taking the lead","lead","leader","leading","decisive","drive results","driven to win","make the call","take over","run the show","run things","command","the boss","assertive","dominant","dominate","call the shots","steer","competitive","ambitious","take control","be in control","authority","push for results","get results"],
+    people:["people person","with people","around people","people-oriented","people oriented","social","outgoing","extrovert","extroverted","sociable","talk it out","think out loud","rally","the room","crowd","mingle","networking","love being around people","talkative","chatty","gregarious","center of attention","work a room","love people","around others","energized by people","bubbly","life of the party"],
+    alone:["alone","independently","by yourself","by myself","on your own","on my own","solo","without help","self-reliant","self reliant","work alone","figure it out yourself","figure it out alone","do it yourself","independent","prefer working alone","go it alone","lone wolf"],
+    details:["detail","details","accurate","accuracy","precise","precision","exact","structure","structured","by the book","careful","thorough","meticulous","organized","follow the rules","rule-following","process","procedure","systematic","fine details","get it right","double-check","double check"],
+    fast:["fast","quick","quickly","risk","risky","take risks","risk-taker","spontaneous","impulsive","gamble","jump in","act fast","speed","urgency","without all the facts","without all the info","take chances","dive in","move fast","hesitate","fast-paced","fast paced","restless","wing it","seize the moment","seize opportunity"],
+    harmony:["harmony","peace","keep the peace","keeping the peace","avoid conflict","get along","agreeable","accommodate","accommodating","everyone happy","keep everyone happy","please others","being liked","smooth things over","conflict","tension","go along to get along","keep things calm"],
+    routine:["routine","steady","steady pace","patient","predictable","consistent","consistency","stability","stable","same pace","calm","slow and steady","dislike change","hate change","avoid change","resist change","patient pace","keep a routine","prefer routine","comfortable with the familiar"],
+    bigpicture:["big picture","big-picture","strategy","strategic","strategist","long game","long-term","long term","vision","visionary","plan ahead","the future","map out","see the whole board","systems thinking","think ahead","forward-thinking","high level","30,000 foot"],
+    expert:["expert","specialist","master","mastery","fine print","deep knowledge","subject matter","domain expert","technical","specialize","go-to person","know everything about","deep expertise","know your stuff","authority on"],
+    reserved:["reserved","quiet","shy","observe","listen first","listen before","introvert","introverted","keep to yourself","keep to myself","think before you speak","think before speaking","private person","soft-spoken","soft spoken","hold back","watch before","take it all in"],
+    flexible:["flexible","adapt","adaptable","adaptive","versatile","flex","go with the flow","adjust","change your style","change my style","wear many hats","whatever the situation","whatever's needed","roll with","embrace change","comfortable with change","like change","love change","open to change","jack of all trades","generalist"],
+    helping:["help others","helping","help people","support others","supportive","serve others","service","care for","caring","selfless","lift up","lift others","mentor","generous","look after","put others first","give back","look out for others","be there for","nurturing","empathetic","empathy"],
+    optimism:["optimism","optimistic","enthusiasm","enthusiastic","positive","upbeat","excited","cheerful","glass half full","motivate","inspire others","high energy","cheer","sell the dream","contagious energy","sunny","hopeful","encouraging"],
+    logic:["logic","logical","proof","data","the facts","analyze","analytical","rational","evidence","objective","reason it out","numbers","head over heart","cold hard facts","by the numbers","fact-based","evidence-based"],
+    intense:["intense","relentless","persistent","persistence","determined","never give up","driven","tenacious","won't quit","wont quit","laser-focused","laser focused","stubborn","see it through","finish what you start","dogged","grind it out","won't let go","wont let go","hard-charging","push through"],
+    unconv:["unconventional","convention","conventional","do things differently","your own way","my own way","rebel","rebellious","break the mold","break the rules","nonconformist","outside the box","challenge the status quo","the norm","challenge norms","creative","innovative","innovate","push boundaries","disrupt","trailblazer","go against the grain","march to your own"]
+  };
+  const NEGATION = /\b(not|never|rarely|seldom|hardly|without|no longer)\b|n['’]t\b/;
+
+  function normalize(text){ return " " + text.toLowerCase().replace(/[^\w\s'-]/g," ").replace(/\s+/g," ") + " "; }
+
+  function matchDimension(text){
+    const t = normalize(text);
+    let best=null, bestScore=0, bestIdx=Infinity;
+    for(const dim of ORDER){
+      let score=0, firstIdx=Infinity;
+      for(const kw of KEYWORDS[dim]){
+        const i = t.indexOf(kw);
+        if(i!==-1){ score += kw.length; if(i<firstIdx) firstIdx=i; }
+      }
+      if(score>bestScore){ bestScore=score; best=dim; bestIdx=firstIdx; }
+    }
+    if(!best) return null;
+    const pre = t.slice(Math.max(0, bestIdx-30), bestIdx);
+    return { dim:best, negated: NEGATION.test(pre) };
+  }
+
+  /* Factor-based fallback — the PI A/B/C/D framework (per pi-ba factors guidance).
+     Runs when no specific trait keyword matched, so almost any working-style
+     question still gets a sensible answer instead of an error. */
+  const FACTOR_NAMES = { A:"Dominance", B:"Extraversion", C:"Patience", D:"Formality" };
+  const FACTOR_WORDS = {
+    A: { high:["dominant","dominance","assertive","take charge","in charge","take control","take the lead","decisive","competitive","ambitious","forceful","bossy","commanding","authority","results-driven","push for","demanding","headstrong","strong-willed","call the shots","driven to win"],
+         low:["deferential","accommodating","go along with","let others lead","let others decide","humble","modest","unassuming","easygoing about","defers to","avoids confrontation","laid-back about control"] },
+    B: { high:["outgoing","extrovert","extroverted","sociable","social","talkative","gregarious","bubbly","chatty","expressive","charismatic","love people","people person","life of the party","enthusiastic with people","warm and open"],
+         low:["reserved","quiet","introvert","introverted","shy","private person","withdrawn","keeps to self","keeps to themselves","soft-spoken","low-key","serious and reserved","not very social","heads-down"] },
+    C: { high:["patient","steady","calm","stable","consistent","methodical","unhurried","relaxed pace","even-keeled","prefers routine","takes their time","deliberate pace","measured"],
+         low:["impatient","fast-paced","fast paced","restless","urgent","fast-moving","fast moving","hurried","antsy","hates waiting","quick to act","high tempo","always on the move","craves variety","craves change"] },
+    D: { high:["formal","precise","detailed","detail-oriented","structured","organized","careful","meticulous","by the book","by-the-book","rule-following","disciplined","thorough","cautious","conscientious","follows the rules","sticks to the plan","accurate"],
+         low:["casual","informal","spontaneous","flexible","freewheeling","big-picture","big picture","loose with rules","improvise","unstructured","breaks the rules","bends the rules","winging it","go with the flow","relaxed about rules"] }
+  };
+
+  function factorFallback(text){
+    const t = normalize(text);
+    let bestF=null, bestScore=0, bestDir=0, bestIdx=Infinity;
+    for(const f of ["A","B","C","D"]){
+      let hi=0, lo=0, idx=Infinity;
+      for(const kw of FACTOR_WORDS[f].high){ const i=t.indexOf(kw); if(i!==-1){ hi+=kw.length; if(i<idx) idx=i; } }
+      for(const kw of FACTOR_WORDS[f].low){  const i=t.indexOf(kw); if(i!==-1){ lo+=kw.length; if(i<idx) idx=i; } }
+      const score=Math.max(hi,lo);
+      if(score>bestScore){ bestScore=score; bestF=f; bestDir = hi>=lo?1:-1; bestIdx=idx; }
+    }
+    if(!bestF) return null;
+    const pre = t.slice(Math.max(0, bestIdx-30), bestIdx);
+    return { factor:bestF, dir:bestDir, negated: NEGATION.test(pre) };
+  }
+
+  function traits(bits){ const o={}; bits.split("").forEach((b,i)=>o[ORDER[i]] = b==="1"); return o; }
+
+  /* ── The 17 PI Reference Profiles (trait signatures verified unique) ── */
+  /* Factor patterns, descriptions, and trait signatures are PI-authoritative,
+     sourced from the PI Knowledge Base ("PI Basics — Reference Profiles") via the
+     PI MCP connector. Trait signatures verified unique (game always solvable). */
+  const PROFILES = [
+    { name:"Analyzer",     group:"Analytical",  factors:{A:"High",B:"Low",C:"Low",D:"High"},
+      desc:"Detail-oriented, precise, and driven to solve complex problems independently.",
+      traits:traits("1011100011000100") },
+    { name:"Controller",   group:"Analytical",  factors:{A:"High",B:"Low",C:"Low",D:"Low"},
+      desc:"Assertive, direct, and results-focused — often challenging the status quo.",
+      traits:traits("1010100001000111") },
+    { name:"Specialist",   group:"Analytical",  factors:{A:"High",B:"Low",C:"High",D:"High"},
+      desc:"Methodical and thorough; prefers working independently on specialized tasks.",
+      traits:traits("1011011011000100") },
+    { name:"Strategist",   group:"Analytical",  factors:{A:"High",B:"Low",C:"Low",D:"High"},
+      desc:"Analytical and forward-thinking, comfortable with complexity and long-range planning.",
+      traits:traits("1011100111000110") },
+    { name:"Venturer",     group:"Analytical",  factors:{A:"High",B:"Low",C:"Low",D:"Low"},
+      desc:"Innovative, risk-tolerant, and driven to explore new opportunities.",
+      traits:traits("1010100101000011") },
+    { name:"Altruist",     group:"Social",      factors:{A:"Low",B:"High",C:"High",D:"High"},
+      desc:"Supportive and empathetic; values harmony and helping others.",
+      traits:traits("0101011000011000") },
+    { name:"Captain",      group:"Social",      factors:{A:"High",B:"High",C:"Low",D:"Low"},
+      desc:"Charismatic and persuasive — a natural leader who inspires action.",
+      traits:traits("1100100100001010") },
+    { name:"Collaborator", group:"Social",      factors:{A:"Low",B:"High",C:"High",D:"Low"},
+      desc:"Team-oriented and cooperative, focused on building relationships.",
+      traits:traits("0100011000111000") },
+    { name:"Maverick",     group:"Social",      factors:{A:"High",B:"High",C:"Low",D:"Low"},
+      desc:"Bold and adventurous; thrives on change and innovation.",
+      traits:traits("1100100100001011") },
+    { name:"Persuader",    group:"Social",      factors:{A:"High",B:"High",C:"Low",D:"Low"},
+      desc:"Influential and enthusiastic, skilled at motivating others.",
+      traits:traits("1100100000101000") },
+    { name:"Promoter",     group:"Social",      factors:{A:"Low",B:"High",C:"Low",D:"Low"},
+      desc:"Energetic and sociable; excels at generating excitement and buy-in.",
+      traits:traits("0100110000111000") },
+    { name:"Adapter",      group:"Stabilizing", factors:{A:"Mid",B:"Mid",C:"Mid",D:"Mid"},
+      desc:"Flexible, balanced, and resilient — adapts to many situations.",
+      traits:traits("0000010000100000") },
+    { name:"Artisan",      group:"Stabilizing", factors:{A:"Low",B:"Low",C:"High",D:"High"},
+      desc:"Precise and reliable; values structure and consistency.",
+      traits:traits("0001011011000000") },
+    { name:"Guardian",     group:"Stabilizing", factors:{A:"Low",B:"Low",C:"High",D:"High"},
+      desc:"Dependable and thorough; prefers clear guidelines and routines.",
+      traits:traits("0001011001010100") },
+    { name:"Operator",     group:"Stabilizing", factors:{A:"Low",B:"Low",C:"High",D:"High"},
+      desc:"Steady and consistent, focused on maintaining quality and process.",
+      traits:traits("0001011001000110") },
+    { name:"Individualist",group:"Persistent",  factors:{A:"High",B:"Low",C:"High",D:"Low"},
+      desc:"Independent and self-motivated; prefers autonomy in their work.",
+      traits:traits("1010001001000111") },
+    { name:"Scholar",      group:"Persistent",  factors:{A:"High",B:"Low",C:"High",D:"High"},
+      desc:"Analytical and disciplined; values expertise and accuracy.",
+      traits:traits("1011001011000110") }
+  ];
+  const byName = {}; PROFILES.forEach(p=>byName[p.name]=p);
+  const iconSrc = name => `icons/${name}.svg`;
+
+  /* Strengths + watch-outs distilled from PI's "Reference Profile Scripts"
+     (Manager's Guide to Reference Profiles), via the PI MCP connector. */
+  const TIPS = {
+    Analyzer:     { s:"Dives deep into complex, data-driven problems and holds a high bar for quality.", c:"Reluctant to act until they have all the information." },
+    Controller:   { s:"Juggles varied, structured work with technical precision.", c:"Struggles with ambiguity and unclear expectations." },
+    Specialist:   { s:"Delivers precise, accurate work and follows established protocols.", c:"Frequent change and shifting goalposts throw them off." },
+    Strategist:   { s:"Tackles complex problems with innovative, results-driven thinking.", c:"May overextend a project without a clearly defined scope." },
+    Venturer:     { s:"Self-starts and drives ambitious, novel projects to completion.", c:"Bristles at micromanagement and close supervision." },
+    Altruist:     { s:"Collaborates while keeping quality, morale, and harmony high.", c:"Uncomfortable in highly competitive, intense settings." },
+    Captain:      { s:"Rallies the team and thrives on strategic, fast-paced challenges.", c:"Can overlook details in their enthusiasm for the big picture." },
+    Collaborator: { s:"Builds relationships, fosters team spirit, and resolves conflict.", c:"Prefers one focus at a time over frequently changing work." },
+    Maverick:     { s:"Drives creative change and thinks outside the box.", c:"May bend the rules in pursuit of innovation." },
+    Persuader:    { s:"Rallies people around a goal; shines in sales, negotiation, and leadership.", c:"Highly detailed or solitary work drains them." },
+    Promoter:     { s:"Wins people over with big-picture charm and natural networking.", c:"Focus on group buy-in can sometimes slow execution." },
+    Adapter:      { s:"A versatile 'chameleon' who flexes and bridges across teams.", c:"Balanced on every factor — no single strong default lever." },
+    Artisan:      { s:"Produces highly precise, accurate work in a stable environment.", c:"Avoids assertiveness and urgent, on-the-spot decisions." },
+    Guardian:     { s:"Reliable and detail-oriented — nothing falls through the cracks.", c:"Ambiguous, high-autonomy decisions make them uneasy." },
+    Operator:     { s:"Steady and conscientious; keeps structured work running smoothly.", c:"Urgency and challenging the status quo feel uncomfortable." },
+    Individualist:{ s:"Independent problem-solver who sees things through despite obstacles.", c:"Non-conforming; resists being boxed in or closely managed." },
+    Scholar:      { s:"Masters a subject and applies deep expertise to complex problems.", c:"Needs time for accuracy; dislikes urgent time pressure." }
+  };
+
+  /* ── Game state ── */
+  const BEST_KEY = "pi_guesswho_best";
+  let secret=null, questionsAsked=0, wrong=0, solved=false, busy=false;
+
+  const board   = document.getElementById("board");
+  const select  = document.getElementById("guess-select");
+  const feedback= document.getElementById("feedback");
+  const qInput  = document.getElementById("q-input");
+  const qAsk    = document.getElementById("q-ask");
+  const qaLog   = document.getElementById("qa-log");
+  const askNote = document.getElementById("ask-note");
+  const aiStatus= document.getElementById("ai-status");
+  const bankList= document.getElementById("bank-list");
+  const statQ   = document.getElementById("stat-q");
+  const statWrong = document.getElementById("stat-wrong");
+  const statLeft  = document.getElementById("stat-left");
+  const statBest  = document.getElementById("stat-best");
+
+  const accent = g => GROUPS[g].accent;
+  const tint   = g => GROUPS[g].bg;
+
+  function getBest(){ const v = localStorage.getItem(BEST_KEY); return v===null ? null : parseInt(v,10); }
+  function renderBest(){ const b=getBest(); statBest.textContent = b===null ? "—" : (b+" mv"); }
+
+  function buildBoard(){
+    board.innerHTML="";
+    PROFILES.forEach(p=>{
+      const tile=document.createElement("div");
+      tile.className="tile"; tile.dataset.name=p.name;
+      tile.innerHTML=`
+        <div class="tile-inner">
+          <div class="tile-face tile-front" style="background:${tint(p.group)}">
+            <div class="tile-accent" style="background:${accent(p.group)}"></div>
+            <div class="tile-body">
+              <div class="picon"><img src="${iconSrc(p.name)}" alt="${p.name}" /></div>
+              <div class="tile-group">${p.group}</div>
+            </div>
+          </div>
+          <div class="tile-face tile-back">
+            <img src="../PI_Logo_White.png" alt="PI" />
+            <span class="ruled-name">${p.name}</span>
+            <span class="ruled">Ruled out</span>
+          </div>
+        </div>`;
+      tile.addEventListener("click",()=>{
+        if(solved) return;
+        tile.classList.toggle("down"); tile.classList.remove("wrong"); updateLeft();
+      });
+      board.appendChild(tile);
+    });
+  }
+
+  function buildBank(){
+    bankList.innerHTML="";
+    ORDER.forEach(dim=>{
+      const b=document.createElement("button");
+      b.className="bank-q"; b.dataset.dim=dim; b.textContent=DIMS[dim].bank;
+      b.addEventListener("click",()=>{
+        if(solved || b.disabled) return;
+        b.disabled = true;
+        logAnswer(DIMS[dim].bank, secret.traits[dim], DIMS[dim].label, "local");
+      });
+      bankList.appendChild(b);
+    });
+  }
+
+  function buildSelect(){
+    select.innerHTML='<option value="">Choose a profile…</option>';
+    [...PROFILES].sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
+      const o=document.createElement("option"); o.value=p.name; o.textContent=`${p.name} — ${p.group}`;
+      select.appendChild(o);
+    });
+  }
+
+  function updateLeft(){ statLeft.textContent = 17 - board.querySelectorAll(".tile.down").length; }
+
+  /* Log a question + answer to the history panel */
+  function logAnswer(questionText, yes, label, source){
+    questionsAsked++; statQ.textContent = questionsAsked;
+    const dimHtml = source==="ai"
+      ? `<span class="ai">✦ Claude</span> · ${label.replace(/</g,"&lt;")}`
+      : `read as: ${label}`;
+    const entry=document.createElement("div");
+    entry.className="qa fresh";
+    entry.innerHTML=`<div class="qa-q">“${questionText.replace(/</g,"&lt;")}”</div>
+      <div class="qa-meta"><span class="ans ${yes?"yes":"no"}">${yes?"YES":"NO"}</span>
+      <span class="qa-dim">${dimHtml}</span></div>`;
+    qaLog.prepend(entry);
+    setTimeout(()=>entry.classList.remove("fresh"),900);
+  }
+
+  /* Resolve a typed question: try the Claude-backed endpoint first, fall back to the local matcher. */
+  async function resolveAnswer(text){
+    try{
+      const ctrl = new AbortController();
+      const to = setTimeout(()=>ctrl.abort(), 16000);
+      const res = await fetch("/api/ask", {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ profile:secret.name, question:text }), signal:ctrl.signal
+      });
+      clearTimeout(to);
+      if(res.ok){
+        const d = await res.json();
+        if(d && (d.answer==="YES" || d.answer==="NO"))
+          return { yes:d.answer==="YES", label:d.dimension||"PI behavioral read", source:"ai" };
+      }
+    }catch(e){ /* fall through to local */ }
+    // Offline engine: precise trait match → broad A/B/C/D factor fallback.
+    const m = matchDimension(text);
+    if(m){ let yes=secret.traits[m.dim]; if(m.negated) yes=!yes; return { yes, label:DIMS[m.dim].label, source:"local" }; }
+    const f = factorFallback(text);
+    if(f){
+      const lv = { High:1, Mid:0, Low:-1 }[secret.factors[f.factor]];
+      let yes = f.dir===1 ? lv>0 : lv<0;
+      if(f.negated) yes=!yes;
+      return { yes, label:FACTOR_NAMES[f.factor], source:"local" };
+    }
+    return null;
+  }
+
+  function setBusy(b){
+    busy=b; qAsk.disabled=b; qInput.disabled=b;
+    qAsk.textContent = b ? "…" : "Ask";
+    if(b){ askNote.className="ask-note info"; askNote.textContent="Reading the room…"; }
+  }
+
+  async function askTyped(){
+    if(solved || busy) return;
+    const text=qInput.value.trim();
+    askNote.className="ask-note"; askNote.textContent="";
+    if(!text) return;
+    setBusy(true);
+    const r = await resolveAnswer(text);
+    setBusy(false);
+    askNote.className="ask-note"; askNote.textContent="";
+    if(!r){
+      askNote.className="ask-note err";
+      askNote.textContent="That doesn't look like a question about working style. Ask about how they lead, decide, socialize, handle pace, or deal with detail — or pick one from the question bank below.";
+      return;
+    }
+    logAnswer(text, r.yes, r.label, r.source);
+    qInput.value=""; qInput.focus();
+  }
+
+  function makeGuess(){
+    if(solved) return;
+    const val=select.value;
+    if(!val){ feedback.className="feedback neutral"; feedback.textContent="Pick a profile first."; return; }
+    if(val===secret.name){ solved=true; win(); }
+    else{
+      wrong++; statWrong.textContent=wrong;
+      const tile=board.querySelector(`.tile[data-name="${val}"]`);
+      if(tile) tile.classList.add("down","wrong");
+      updateLeft();
+      feedback.className="feedback miss";
+      feedback.textContent=`Not ${val}. That tile is flipped down — keep narrowing it down!`;
+    }
+  }
+
+  function win(){
+    const p=secret, moves=questionsAsked+wrong;
+    const prevBest=getBest(), isBest = prevBest===null || moves<prevBest;
+    if(isBest){ localStorage.setItem(BEST_KEY,String(moves)); renderBest(); }
+
+    document.getElementById("reveal-icon").innerHTML = `<img src="${iconSrc(p.name)}" alt="${p.name}" />`;
+    document.getElementById("reveal-group").textContent = p.group+" profile";
+    document.getElementById("reveal-desc").textContent = p.desc;
+    const labels={A:"Dominance",B:"Extraversion",C:"Patience",D:"Formality"};
+    document.getElementById("factor-chips").innerHTML =
+      Object.entries(p.factors).map(([k,v])=>`<span class="fchip">${labels[k]} <b>${v}</b></span>`).join("");
+    const tip = TIPS[p.name] || { s:"", c:"" };
+    document.getElementById("tip-strengths").textContent = tip.s;
+    document.getElementById("tip-caution").textContent = tip.c;
+    document.getElementById("newbest").classList.toggle("show", isBest && prevBest!==null);
+    document.getElementById("win-stats").textContent =
+      `Solved in ${moves} move${moves===1?"":"s"} — ${questionsAsked} question${questionsAsked===1?"":"s"} and ${wrong} wrong guess${wrong===1?"":"es"}.`;
+    document.getElementById("win-title").textContent = (wrong===0 && questionsAsked<=5) ? "Nailed it!" : "It's a match!";
+    document.getElementById("overlay").classList.add("show");
+    confetti();
+  }
+
+  function confetti(){
+    const colors=["#5000A8","#0092C8","#2E1F44","#EF3340","#4527A0"];
+    for(let i=0;i<90;i++){
+      const c=document.createElement("div"); c.className="confetti";
+      c.style.left=Math.random()*100+"vw"; c.style.background=colors[i%colors.length];
+      const dur=2.2+Math.random()*1.8, delay=Math.random()*0.6;
+      c.style.animation=`fall ${dur}s linear ${delay}s forwards`;
+      if(Math.random()>.5) c.style.borderRadius="50%";
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),(dur+delay)*1000+200);
+    }
+  }
+
+  function newGame(){
+    secret=PROFILES[Math.floor(Math.random()*PROFILES.length)];
+    questionsAsked=0; wrong=0; solved=false;
+    statQ.textContent="0"; statWrong.textContent="0"; statLeft.textContent="17";
+    feedback.className="feedback neutral"; feedback.textContent="";
+    askNote.className="ask-note"; askNote.textContent=""; qInput.value=""; qInput.disabled=false; qAsk.disabled=false; qAsk.textContent="Ask";
+    qaLog.innerHTML=""; select.value="";
+    document.getElementById("overlay").classList.remove("show");
+    buildBoard(); buildBank(); renderBest();
+    // console.log("secret:", secret.name); // debug
+  }
+
+  async function checkAiMode(){
+    let ai=false;
+    try{ const r=await fetch("/api/health"); if(r.ok){ const d=await r.json(); ai=!!d.ai; } }catch(e){}
+    aiStatus.innerHTML = ai
+      ? "<b>✦ Claude-powered answers are on</b> — ask anything, in any words."
+      : "Using the built-in behavioral engine — it reads most working-style questions. For free-form AI answers, run the site with <b>node server.js</b> and an API key.";
+  }
+
+  qAsk.addEventListener("click",askTyped);
+  qInput.addEventListener("keydown",e=>{ if(e.key==="Enter") askTyped(); });
+  document.getElementById("guess-btn").addEventListener("click",makeGuess);
+  document.getElementById("new-game").addEventListener("click",newGame);
+  document.getElementById("play-again").addEventListener("click",newGame);
+
+  buildSelect();
+  newGame();
+  checkAiMode();
+</script>
+</body>
+</html>

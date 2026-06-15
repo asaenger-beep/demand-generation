@@ -68,24 +68,23 @@
 
     /* ── Board ── */
     .board { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:.85rem; }
-    .tile { perspective:1000px; aspect-ratio:3/3.5; cursor:pointer; }
-    .tile-inner { position:relative; width:100%; height:100%; transition:transform .5s cubic-bezier(.2,.7,.2,1); transform-style:preserve-3d; }
-    .tile.down .tile-inner { transform:rotateY(180deg); }
-    .tile-face { position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; box-shadow:var(--shadow); }
-    .tile-front { background:var(--pi-card-bg); border:1px solid var(--pi-border); }
-    .tile:hover .tile-front { box-shadow:var(--shadow-hover); }
+    .tile { position:relative; aspect-ratio:3/3.5; cursor:pointer; border-radius:var(--radius); }
+    .tile-front { position:absolute; inset:0; border-radius:var(--radius); overflow:hidden; display:flex; flex-direction:column; background:var(--pi-card-bg); border:1px solid var(--pi-border); box-shadow:var(--shadow); transition:box-shadow .2s, transform .12s; }
+    .tile:hover .tile-front { box-shadow:var(--shadow-hover); transform:translateY(-2px); }
     .tile-accent { height:6px; width:100%; flex:0 0 auto; }
     .tile-body { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:.5rem .5rem .55rem; text-align:center; gap:.25rem; min-height:0; }
     .picon { width:100%; flex:1; display:flex; align-items:center; justify-content:center; min-height:0; }
     .picon img { width:100%; height:100%; object-fit:contain; display:block; }
     .tile-group { font-size:.66rem; font-weight:400; text-transform:uppercase; letter-spacing:.06em; color:var(--pi-muted); flex:0 0 auto; }
-    /* Back of tile (flipped down) */
-    .tile-back { background:var(--pi-purple); transform:rotateY(180deg); border:1px solid var(--pi-purple); align-items:center; justify-content:center; gap:.45rem; padding:.6rem; }
-    .tile-back img { height:20px; width:auto; opacity:.9; }
-    .tile-back .ruled-name { color:#fff; font-weight:500; font-size:1rem; line-height:1.15; }
-    .tile-back .ruled { font-size:.66rem; color:rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:.09em; }
-    .tile.wrong .tile-back { background:#3a1530; border-color:#3a1530; }
-    .tile.wrong .tile-back .ruled { color:#ffb3b8; }
+    /* Ruled-out state — flat overlay, no 3D flip (robust on every browser) */
+    .ruled-overlay { position:absolute; inset:0; border-radius:var(--radius); background:rgba(46,31,68,.80); color:#fff; display:none; flex-direction:column; align-items:center; justify-content:center; gap:.35rem; padding:.5rem; text-align:center; }
+    .tile.down .ruled-overlay { display:flex; }
+    .tile.down .tile-front { filter:grayscale(.85); }
+    .ruled-overlay .x { width:32px; height:32px; border:2px solid rgba(255,255,255,.85); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; line-height:1; }
+    .ruled-overlay .nm { font-weight:500; font-size:.98rem; line-height:1.1; }
+    .ruled-overlay .rl { font-size:.64rem; text-transform:uppercase; letter-spacing:.09em; opacity:.75; }
+    .tile.wrong .ruled-overlay { background:rgba(124,28,42,.85); }
+    .tile.wrong .ruled-overlay .rl { color:#ffd9dd; }
 
     /* ── Side panel ── */
     .panel { display:flex; flex-direction:column; gap:1.1rem; position:sticky; top:1rem; }
@@ -484,20 +483,14 @@
       const tile=document.createElement("div");
       tile.className="tile"; tile.dataset.name=p.name;
       tile.innerHTML=`
-        <div class="tile-inner">
-          <div class="tile-face tile-front" style="background:${tint(p.group)}">
-            <div class="tile-accent" style="background:${accent(p.group)}"></div>
-            <div class="tile-body">
-              <div class="picon"><img src="${iconSrc(p.name)}" alt="${p.name}" /></div>
-              <div class="tile-group">${p.group}</div>
-            </div>
+        <div class="tile-front" style="background:${tint(p.group)}">
+          <div class="tile-accent" style="background:${accent(p.group)}"></div>
+          <div class="tile-body">
+            <div class="picon"><img src="${iconSrc(p.name)}" alt="${p.name}" /></div>
+            <div class="tile-group">${p.group}</div>
           </div>
-          <div class="tile-face tile-back">
-            <img src="../PI_Logo_White.png" alt="PI" />
-            <span class="ruled-name">${p.name}</span>
-            <span class="ruled">Ruled out</span>
-          </div>
-        </div>`;
+        </div>
+        <div class="ruled-overlay"><span class="x">&#10005;</span><span class="nm">${p.name}</span><span class="rl">Ruled out</span></div>`;
       tile.addEventListener("click",()=>{
         if(solved) return;
         tile.classList.toggle("down"); tile.classList.remove("wrong"); updateLeft();
@@ -590,8 +583,8 @@
     setBusy(false);
     askNote.className="ask-note"; askNote.textContent="";
     if(!r){
-      askNote.className="ask-note err";
-      askNote.textContent="That doesn't look like a question about working style. Ask about how they lead, decide, socialize, handle pace, or deal with detail — or pick one from the question bank below.";
+      askNote.className="ask-note info";
+      askNote.textContent="🤔 I only know how this person works — try asking about how they lead, deal with people, handle pace or pressure, or sweat the details. (Tap the question bank for ideas.)";
       return;
     }
     logAnswer(text, r.yes, r.label, r.source);

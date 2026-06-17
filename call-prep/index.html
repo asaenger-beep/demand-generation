@@ -121,6 +121,14 @@
     .action-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; }
     .mini-avatar { width:32px; height:32px; border-radius:50%; background:var(--color-background-info); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:500; color:var(--color-text-info); flex-shrink:0; }
     .action-detail { font-size:13px; color:var(--color-text-primary); line-height:1.5; }
+    .why { margin-top:9px; display:flex; flex-direction:column; gap:6px; }
+    .why-lead { font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:var(--color-text-tertiary); font-weight:500; }
+    .why-row { display:flex; gap:8px; font-size:12.5px; line-height:1.5; align-items:flex-start; }
+    .why-tag { flex-shrink:0; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; padding:2px 7px; border-radius:5px; margin-top:1px; }
+    .why-title { background:#EEEDFE; color:#534AB7; }
+    .why-profile { background:#E1F5EE; color:#0F6E56; }
+    .why-none { background:var(--color-background-secondary); color:var(--color-text-tertiary); }
+    .why-muted span:last-child { color:var(--color-text-tertiary); }
     .ba-note { background:var(--color-background-secondary); border-radius:var(--border-radius-md); padding:0.75rem 1rem; margin-top:10px; }
     .draft-btn { margin-top:10px; font-size:12px; padding:6px 13px; cursor:pointer; border:1px solid var(--pi-violet); background:#fff; color:var(--pi-violet); border-radius:7px; font-family:inherit; font-weight:500; transition:all .12s; }
     .draft-btn:hover { background:var(--pi-violet); color:#fff; }
@@ -163,18 +171,18 @@
           </div>
         </form>
         <div class="samples">
-          <span class="lbl">Try a real lead:</span>
-          <button class="chip" data-email="kbarros@uhmproperties.com">Keila Barros · UHM Properties</button>
-          <button class="chip" data-email="melissa.brown@lchhfamily.com">Melissa Brown · Life Care Home Health</button>
-          <button class="chip" data-email="bjohnson1@baltimorecountymd.gov">Blaire Johnson · Board of Elections</button>
-          <button class="chip" data-email="matthew.saber@sgwealthmanagers.com">Matthew Saber · SG Wealth</button>
-          <button class="chip" data-email="bcombs@adriansteel.com">Bobby Combs · Adrian Steel</button>
+          <span class="lbl">Try a sample lead:</span>
+          <button class="chip" data-email="dwhitfield@northpoint-logistics.com">Dana Whitfield · CEO (Maverick)</button>
+          <button class="chip" data-email="praman@meridianhealthgroup.com">Priya Raman · CPO (Captain)</button>
+          <button class="chip" data-email="mbell@cedarvaleretail.com">Marcus Bell · HR Director (Operator)</button>
+          <button class="chip" data-email="snunez@brightwavesoftware.com">Sofia Nunez · Team Lead (Collaborator)</button>
+          <button class="chip" data-email="tcastellano@atlasmfg.com">Theo Castellano · L&D (Strategist)</button>
         </div>
       </div>
 
       <div class="proto-note">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <div><strong>Prototype with 5 real leads.</strong> These briefs were assembled from live HubSpot, Salesforce, and Slack (#qualified-success-celebration) data pulled on Jun 17, 2026, then baked in as static samples so the page renders every time. Live, on-demand connector pulls get wired in once the data path is chosen. Contains real prospect contact info — keep internal.</div>
+        <div><strong>Prototype with 5 anonymized sample leads.</strong> All contacts are fictional. Each is fully populated — a job title <em>and</em> a PI reference profile — so every brief shows how the messaging is tailored to <strong>both</strong>: title → persona (what to lead with), reference profile → delivery style (how to say it). Live, on-demand HubSpot · Salesforce · Slack · PI Assistant pulls get wired in once the data path is chosen.</div>
       </div>
     </section>
 
@@ -191,123 +199,116 @@
 
   <script>
   /* ──────────────────────────────────────────────────────────────
-     MOCK DATA — replace with live connector pulls later.
-     Each record mirrors what the skill assembles from
-     HubSpot + Salesforce + Slack + PI Assistant.
+     SAMPLE DATA — anonymized, fictional contacts.
+     Every record is "data-complete": each has a TITLE (drives persona /
+     messaging) and a REFERENCE PROFILE (drives the talk-track modifier),
+     so the brief shows how recommendations are tailored to BOTH — exactly
+     as the skill behaves when HubSpot/PI data is fully populated.
+     Replace with live connector pulls later.
      ────────────────────────────────────────────────────────────── */
   const MOCK = {
-    "kbarros@uhmproperties.com": {
-      firstName:"Keila", lastName:"Barros", title:"", company:"UHM Properties",
-      companySize:"51–100", location:"Chelsea, MA",
-      email:"kbarros@uhmproperties.com", phone:"(617) 541-5510",
-      signalClass:"new", signalLabel:"New — demo booked Jun 23",
-      signalBody:"Brand-new today: Keila came in on the pricing page and requested a demo, then booked same-day for Jun 23 (9:30 AM ET, with Nate Dobro). Entering on /plans/ and converting immediately is a strong, ROI-minded buying signal.",
-      channelBadge:null, meetingBadge:"Demo · Jun 23",
-      intent:{ body:"Started on the plans/pricing page and went straight to a demo request — she's evaluating cost and plan fit for a 51–100 person team, not just browsing.",
-               pills:["Pricing-focused","Demo requested","High intent"] },
-      pain:"A 51–100 person property-management firm without a big HR function — every hire matters and turnover in field/office roles is costly. She wants confidence in who she's hiring and a clear ROI story before she commits budget.",
-      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
-      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229199120947",
-      slackNote:"Qualified meeting brief posted today",
+    "dwhitfield@northpoint-logistics.com": {
+      firstName:"Dana", lastName:"Whitfield", title:"CEO & Founder", company:"Northpoint Logistics",
+      companySize:"180", location:"Columbus, OH",
+      email:"dwhitfield@northpoint-logistics.com", phone:"(614) 555-0118",
+      signalClass:"hot", signalLabel:"Re-engaged today after demo",
+      signalBody:"Dana attended a demo last week, went quiet, then came back today and pulled up pricing and the ROI calculator. A founder circling back to ROI on their own is a strong buying signal — move now.",
+      channelBadge:"Paid search", meetingBadge:null,
+      intent:{ body:"Returned to the pricing page and ROI calculator after the demo, and compared PI against a named competitor — they're building the business case and weighing alternatives.",
+               pills:["Pricing / ROI","Competitive eval","Post-demo"] },
+      pain:"Scaling headcount fast across new logistics hubs; a wrong leadership or ops hire is expensive and slows the whole network. Dana wants speed and confidence, not a long evaluation.",
+      lifecycleStage:"SQL", openDeals:1, domainCount:4, lastActivity:"Today",
+      hubspotUrl:"#",
+      slackNote:null,
       contacts:[
-        { firstName:"Keila", lastName:"Barros", title:"",
-          persona:"Buyer (inferred)",
-          personaApproach:"No title on file, but a pricing-page entry at a 51–100 firm reads as an owner/operator evaluating cost and ROI. Lead with business outcomes and plan fit for her size; confirm early whether she owns HR or the business.",
-          cta:"Prep for booked demo — Jun 23, 9:30 AM ET (owner: Nate Dobro)",
-          talkTrack:"You came in through our plans page and booked a demo the same day, so let's make it count — I'll show you exactly what PI looks like for a team your size and walk the ROI math with you.",
-          ba:null }
+        { firstName:"Dana", lastName:"Whitfield", title:"CEO & Founder",
+          cta:"Strike while warm — send the ROI one-pager and propose a 15-min next step",
+          talkTrack:"You came back to the ROI math on your own, so let's not slow it down — give me fifteen minutes and I'll show you the payback for a team your size and the two things that change after rollout.",
+          ba:{ profile:"Maverick" } }
       ]
     },
 
-    "melissa.brown@lchhfamily.com": {
-      firstName:"Melissa", lastName:"Brown", title:"", company:"Life Care Home Health Family",
-      companySize:"1,001–5,000", location:"Irving, TX",
-      email:"melissa.brown@lchhfamily.com", phone:"(469) 648-3206",
-      signalClass:"new", signalLabel:"New — high-intent, demo booked",
-      signalBody:"Brand-new today: brand-searched PI on Bing, explored several product pages, and booked a demo for Jun 22 (12 PM CT, with Mike Tannous). Multi-page exploration plus a demo request is about as high-intent as a fresh lead gets.",
-      channelBadge:"Paid search", meetingBadge:"Demo · Jun 22",
-      intent:{ body:"Searched for PI by name on Bing, then explored the software, behavioral assessment, and interview-guide pages before requesting a demo — she's assessment-aware and looking at the full hiring workflow.",
-               pills:["Brand search","Behavioral assessment","Demo requested"] },
-      pain:"A 1,001–5,000 person home-health org lives and dies by caregiver hiring and turnover. She needs hiring that's scalable and defensible across many locations — consistency and speed at volume, not a boutique process.",
-      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
-      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229171877412",
-      slackNote:"Qualified meeting brief posted today",
+    "praman@meridianhealthgroup.com": {
+      firstName:"Priya", lastName:"Raman", title:"Chief People Officer", company:"Meridian Health Group",
+      companySize:"2,500", location:"Boston, MA",
+      email:"praman@meridianhealthgroup.com", phone:"(617) 555-0143",
+      signalClass:"warm", signalLabel:"Steady senior-level research",
+      signalBody:"Priya has been methodically working through case studies and employer-brand content over the past two weeks — consensus-building, not a single spike. Consistent executive research that's worth getting ahead of.",
+      channelBadge:"Organic", meetingBadge:null,
+      intent:{ body:"Spent time on customer case studies, the behavioral assessment overview, and employer-brand resources — she's validating outcomes and defensibility before bringing this to her exec team.",
+               pills:["Case studies","Assessment-aware","Employer brand"] },
+      pain:"Owns talent strategy for a 2,500-person health system and has to defend it at the board level. She cares about retention, defensible selection, and a story she can stand behind — not daily workflow.",
+      lifecycleStage:"SQL", openDeals:1, domainCount:7, lastActivity:"2 days ago",
+      hubspotUrl:"#",
+      slackNote:null,
       contacts:[
-        { firstName:"Melissa", lastName:"Brown", title:"",
-          persona:"Talent (inferred)",
-          personaApproach:"No title on file, but viewing the behavioral assessment and interview guide signals an HR/talent buyer. Lead with scalable, defensible hiring across locations and high-volume caregiver roles; she already gets the assessment angle.",
-          cta:"Prep for booked demo — Jun 22, 12 PM CT (owner: Mike Tannous)",
-          talkTrack:"You looked at our assessment and the interview guide before booking — most healthcare teams your size are fighting caregiver turnover. I'll show you how PI makes hiring repeatable across every location.",
-          ba:null }
+        { firstName:"Priya", lastName:"Raman", title:"Chief People Officer",
+          cta:"Arm her for the exec conversation — share the board-ready outcomes deck",
+          talkTrack:"You hold the strategy, so I'll keep it at that altitude — here's the retention and defensibility story in numbers, and how other systems your size rolled it out without disrupting the floor.",
+          ba:{ profile:"Captain" } }
       ]
     },
 
-    "bjohnson1@baltimorecountymd.gov": {
-      firstName:"Blaire", lastName:"Johnson", title:"", company:"Baltimore County Board of Elections",
-      companySize:"26–50", location:"Alexandria, VA",
-      email:"bjohnson1@baltimorecountymd.gov", phone:"(240) 319-2072",
-      signalClass:"new", signalLabel:"New — demo booked Jun 18",
-      signalBody:"Brand-new today: came in on a Bing brand search, viewed the software overview, and requested a demo booked for Jun 18 (9 AM ET, with Nate Dobro). Public-sector buyer moving quickly from search to demo.",
-      channelBadge:"Paid search", meetingBadge:"Demo · Jun 18",
-      intent:{ body:"Entered on a Bing brand search for Predictive Index, viewed the software overview, and requested a demo — early-stage but high-intent, in a public-sector hiring context.",
-               pills:["Brand search","Demo requested","Public sector"] },
-      pain:"Government hiring has to be objective, standardized, and audit-ready — especially for election staffing under public scrutiny. She needs defensible selection she can stand behind, and a fast rollout for seasonal hiring spikes.",
-      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
-      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229210674705",
-      slackNote:"Qualified meeting brief posted today",
+    "mbell@cedarvaleretail.com": {
+      firstName:"Marcus", lastName:"Bell", title:"HR Director", company:"Cedar & Vale Retail",
+      companySize:"450", location:"Austin, TX",
+      email:"mbell@cedarvaleretail.com", phone:"(512) 555-0177",
+      signalClass:"warm", signalLabel:"Opened last 3 emails",
+      signalBody:"Marcus has opened the last three emails and clicked into the interview-guide and process content. Engaged and practical — he's looking at how it actually works day to day.",
+      channelBadge:"Email", meetingBadge:null,
+      intent:{ body:"Focused on interview guides and structured-process content — he's evaluating how PI fits into an existing hiring workflow, not whether assessments matter.",
+               pills:["Process-focused","Interview guides"] },
+      pain:"High-volume retail hiring across stores, and his constant battle is getting hiring managers to follow one consistent, defensible process. He fears tool sprawl and low adoption.",
+      lifecycleStage:"SQL", openDeals:0, domainCount:5, lastActivity:"3 days ago",
+      hubspotUrl:"#",
+      slackNote:null,
       contacts:[
-        { firstName:"Blaire", lastName:"Johnson", title:"",
-          persona:"Public-sector buyer (inferred)",
-          personaApproach:"No title on file; a Board of Elections buyer is defensibility- and compliance-sensitive. Lead with objective, standardized selection and audit-ready data, and frame ROI around accountability and seasonal/election staffing rather than pure cost savings.",
-          cta:"Prep for booked demo — Jun 18, 9 AM ET (owner: Nate Dobro)",
-          talkTrack:"Public-sector hiring has to be defensible and consistent. I'll show you how PI gives you objective, standardized selection you can stand behind — and how fast it is to roll out when election staffing ramps.",
-          ba:null }
+        { firstName:"Marcus", lastName:"Bell", title:"HR Director",
+          cta:"Send the implementation overview — show how it slots into their process",
+          talkTrack:"You're the one making the process stick across every store — let me show you exactly how PI plugs into your current workflow and what the first 30 days of rollout look like, step by step.",
+          ba:{ profile:"Operator" } }
       ]
     },
 
-    "matthew.saber@sgwealthmanagers.com": {
-      firstName:"Matthew", lastName:"Saber", title:"Portfolio Manager", company:"SG Wealth Managers",
-      companySize:"1–25", location:"Phoenix, AZ",
-      email:"matthew.saber@sgwealthmanagers.com", phone:"+1 (480) 597-1946",
-      signalClass:"new", signalLabel:"New — qual call today",
-      signalBody:"Brand-new today: found PI via ChatGPT and booked a qualification meeting today (Jun 17, 1:15 PM MT, with Allan Serpa). He's already on the calendar — this is prep for a call happening now, not outreach.",
-      channelBadge:null, meetingBadge:"Qual · today",
-      intent:{ body:"Discovered PI through ChatGPT and booked a qualification meeting after viewing the demo page — a tech-forward small-firm buyer who moves fast.",
-               pills:["Found via ChatGPT","Demo page","Qual booked"] },
-      pain:"At a 1–25 person wealth firm, every hire is high-stakes and a bad advisor or ops hire is expensive. As Portfolio Manager he's likely a principal — he wants confidence in fit, fast, not a long evaluation.",
-      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
-      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229182575385",
-      slackNote:"Qualified meeting brief posted today",
+    "snunez@brightwavesoftware.com": {
+      firstName:"Sofia", lastName:"Nunez", title:"Customer Success Team Lead", company:"Brightwave Software",
+      companySize:"300", location:"Denver, CO",
+      email:"snunez@brightwavesoftware.com", phone:"(303) 555-0162",
+      signalClass:"new", signalLabel:"First touch today",
+      signalBody:"Sofia came in today for the first time and browsed team-dynamics and coaching content. She's an end user exploring, not a buyer yet — but a strong potential champion and an expansion / Inspire entry point.",
+      channelBadge:"Organic", meetingBadge:null,
+      intent:{ body:"Landed on team-dynamics and manager-coaching resources — she's looking to understand and lead her team better, not to buy a hiring platform.",
+               pills:["Team dynamics","Coaching","Just arrived"] },
+      pain:"Leads a CS team and wants to understand what makes each person tick and coach them well. Not a buyer herself — but the wedge for expansion and for Inspire / Design.",
+      lifecycleStage:"Lead", openDeals:0, domainCount:6, lastActivity:"Today",
+      hubspotUrl:"#",
+      slackNote:null,
       contacts:[
-        { firstName:"Matthew", lastName:"Saber", title:"Portfolio Manager",
-          persona:"Leader / owner (inferred)",
-          personaApproach:"At a 1–25 person firm, a Portfolio Manager is most likely a principal and the buyer — not an HR end user. Treat him as the decision-maker: lead with confidence-in-fit and the cost of a bad hire, keep it fast and outcome-driven. Found us via ChatGPT, so he'll appreciate a sharp, modern pitch.",
-          cta:"Prep for qual meeting — TODAY, Jun 17, 1:15 PM MT (owner: Allan Serpa)",
-          talkTrack:"You found us through ChatGPT, so I know you move fast — I'll match that. At a firm your size every hire matters, and PI gets you a confident read on fit before you commit.",
-          ba:null }
+        { firstName:"Sofia", lastName:"Nunez", title:"Customer Success Team Lead",
+          cta:"Nurture as a champion — point her to team/coaching resources, not a sales pitch",
+          talkTrack:"You're focused on getting the best out of your team — start here: this shows you how each person prefers to work and where to coach. When you're ready, it scales to the whole org.",
+          ba:{ profile:"Collaborator" } }
       ]
     },
 
-    "bcombs@adriansteel.com": {
-      firstName:"Bobby", lastName:"Combs", title:"", company:"Adrian Steel",
-      companySize:"501–1,000", location:"Adrian, MI",
-      email:"bcombs@adriansteel.com", phone:"+1 (913) 961-1590",
-      signalClass:"new", signalLabel:"New — qual call today",
-      signalBody:"Brand-new today: searched \"the predictive index pi test\" on Bing, dug into the Cognitive Assessment page, then booked a qualification meeting today (Jun 17, 4:15 PM ET, with Mike Tannous) right after a live chat. Strong, assessment-led intent.",
-      channelBadge:null, meetingBadge:"Qual · today",
-      intent:{ body:"Searched \"predictive index pi test\" on Bing and focused on the Cognitive Assessment page, then booked after a live chat and form — targeted interest in how candidates are measured.",
-               pills:["Cognitive assessment","Live chat","High intent"] },
-      pain:"A 501–1,000 person manufacturer hiring across the floor and into management needs objective screening at scale — fewer mis-hires, less reliance on gut feel. His focus on the cognitive assessment says he cares about how rigorously candidates are measured.",
-      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
-      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229189606022",
-      slackNote:"Qualified meeting brief posted today",
+    "tcastellano@atlasmfg.com": {
+      firstName:"Theo", lastName:"Castellano", title:"Director of Learning & Development", company:"Atlas Manufacturing",
+      companySize:"1,200", location:"Chicago, IL",
+      email:"tcastellano@atlasmfg.com", phone:"(312) 555-0109",
+      signalClass:"hot", signalLabel:"Demo booked for Tuesday",
+      signalBody:"Theo requested a demo after working through the leadership-development content and booked for Tuesday. High intent with a clear use case — leadership development at scale.",
+      channelBadge:"Paid search", meetingBadge:"Demo · Tue",
+      intent:{ body:"Worked through leadership-development and manager-effectiveness content, then requested a demo — he's mapping PI to a development program, an Inspire / Design-shaped use case.",
+               pills:["L&D content","Leadership dev","Demo requested"] },
+      pain:"Scaling leadership development and manager effectiveness across multiple plants. He needs a framework and data that make development programs measurable and repeatable.",
+      lifecycleStage:"SQL", openDeals:1, domainCount:9, lastActivity:"Today",
+      hubspotUrl:"#",
+      slackNote:null,
       contacts:[
-        { firstName:"Bobby", lastName:"Combs", title:"",
-          persona:"Talent (inferred)",
-          personaApproach:"No title on file, but going straight to the Cognitive Assessment page and searching \"pi test\" reads as an assessment-led HR/ops buyer. Lead with objective candidate screening at scale for floor and management roles, and the rigor of the science.",
-          cta:"Prep for qual meeting — TODAY, Jun 17, 4:15 PM ET (owner: Mike Tannous)",
-          talkTrack:"You went straight to the cognitive assessment and even searched 'PI test', so you're clearly evaluating how we measure candidates. I'll show you how the science holds up at Adrian Steel's scale.",
-          ba:null }
+        { firstName:"Theo", lastName:"Castellano", title:"Director of Learning & Development",
+          cta:"Prep for booked demo — center it on a development-program framework",
+          talkTrack:"You're building development at scale, so I'll open with the framework — here's how PI structures manager effectiveness across plants, then we'll look at the data that proves it's working.",
+          ba:{ profile:"Strategist" } }
       ]
     }
   };
@@ -403,16 +404,36 @@
       const baBadge = cBA
         ? `<span class="badge badge-ba" style="font-size:10px;">BA: ${esc(c.ba.profile)}</span>`
         : `<span class="badge badge-no-ba" style="font-size:10px;">No BA on file</span>`;
-      let approach = cpm.approach;
-      if (cBA && BA_MODIFIER[c.ba.profile]) approach += " " + BA_MODIFIER[c.ba.profile];
+
+      // Two-step tailoring, shown explicitly:
+      //   Title → persona  ⇒ WHAT to lead with (messaging angle)
+      //   Reference profile ⇒ HOW to deliver it (talk-track modifier)
+      const titleWhy = `<div class="why-row">
+            <span class="why-tag why-title">Title</span>
+            <span>${c.title ? esc(c.title)+" → " : ""}<strong>${esc(cpm.persona)}</strong> — ${esc(cpm.approach)}</span>
+          </div>`;
+      const profileWhy = cBA
+        ? `<div class="why-row">
+            <span class="why-tag why-profile">Profile</span>
+            <span><strong>${esc(c.ba.profile)}</strong> — ${esc(BA_MODIFIER[c.ba.profile] || "tailor delivery style, pace, and framing to their reference profile.")}</span>
+          </div>`
+        : `<div class="why-row why-muted">
+            <span class="why-tag why-none">Profile</span>
+            <span>No reference profile on file — a completed BA would tailor the delivery style, pace, and framing.</span>
+          </div>`;
+
       return `
       <div class="action-row">
         <div class="mini-avatar">${esc(initials(c.firstName,c.lastName))}</div>
         <div class="action-detail">
           <strong>${esc(c.firstName)} ${esc(c.lastName)}</strong> — ${esc(c.cta)}<br>
           <span class="badge badge-persona" style="font-size:10px;">${esc(cpm.persona)}</span>
-          &nbsp;${baBadge}<br><br>
-          ${esc(approach)}
+          &nbsp;${baBadge}
+          <div class="why">
+            <div class="why-lead">Messaging tuned to title + reference profile</div>
+            ${titleWhy}
+            ${profileWhy}
+          </div>
         </div>
       </div>`;
     }).join("");

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Call Prep — Pre-Call Intelligence Brief · The Predictive Index</title>
+  <style>
+    /* ── PI Brand Fonts ── */
+    @font-face { font-family:"Roboto"; src:url("../fonts/Roboto-Light.ttf") format("truetype"); font-weight:300; font-style:normal; font-display:swap; }
+    @font-face { font-family:"Roboto"; src:url("../fonts/Roboto-Regular.ttf") format("truetype"); font-weight:400; font-style:normal; font-display:swap; }
+    @font-face { font-family:"Roboto"; src:url("../fonts/Roboto-Medium.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
+    @font-face { font-family:"Roboto"; src:url("../fonts/Roboto-Bold.ttf") format("truetype"); font-weight:700; font-style:normal; font-display:swap; }
+    @font-face { font-family:"Roboto Serif"; src:url("../fonts/RobotoSerif-Medium.ttf") format("truetype"); font-weight:500; font-style:normal; font-display:swap; }
+  </style>
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+    :root {
+      /* PI brand */
+      --pi-purple:#2E1F44; --pi-violet:#5000A8; --pi-blue:#0092C8; --pi-red:#EF3340;
+      --pi-offwhite:#FFFDF8; --pi-black:#141413; --pi-border:#D9D9D9; --pi-muted:#5C5C5C;
+
+      /* Brief tokens (mapped from Claude widget CSS vars to real values) */
+      --color-text-primary:#141413;
+      --color-text-secondary:#5C5C5C;
+      --color-text-tertiary:#8A887F;
+      --color-text-info:#1F6FB2;
+      --color-background-primary:#FFFFFF;
+      --color-background-secondary:#F6F4EE;
+      --color-background-info:#E6F1F8;
+      --color-border-tertiary:#E7E4DC;
+      --border-radius-lg:12px;
+      --border-radius-md:8px;
+
+      --radius:8px;
+      --shadow:0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.07);
+    }
+
+    body {
+      background:var(--pi-offwhite); color:var(--pi-black);
+      font-family:"Roboto", system-ui, sans-serif; font-weight:400; min-height:100vh;
+    }
+
+    /* ── Header ── */
+    header { background:var(--pi-purple); padding:0 clamp(1.5rem,5vw,4rem); }
+    .header-inner { max-width:880px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:1rem; height:72px; }
+    .logo-link { display:flex; align-items:center; }
+    .logo-link img { height:26px; width:auto; display:block; }
+    .header-label { font-size:.8rem; font-weight:300; color:rgba(255,255,255,.65); }
+    .header-label a { color:rgba(255,255,255,.85); text-decoration:none; }
+    .header-label a:hover { text-decoration:underline; }
+
+    /* ── Hero / form ── */
+    .wrap { max-width:880px; margin:0 auto; padding:0 clamp(1.25rem,5vw,2.5rem); }
+    .hero { margin:2.75rem auto 1.25rem; }
+    .eyebrow { display:inline-block; font-size:.72rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--pi-violet); background:#EDE6F7; padding:4px 10px; border-radius:999px; margin-bottom:.85rem; }
+    .hero h1 { font-family:"Roboto Serif", Georgia, serif; font-weight:500; font-size:clamp(1.7rem,4vw,2.4rem); line-height:1.15; letter-spacing:-.01em; margin-bottom:.6rem; }
+    .hero p.sub { font-size:1.02rem; color:var(--pi-muted); max-width:640px; line-height:1.55; }
+
+    .form-card { background:#fff; border:1px solid var(--pi-border); border-radius:14px; box-shadow:var(--shadow); padding:1.4rem 1.4rem 1.2rem; margin:1.5rem 0 1rem; }
+    .form-row { display:flex; gap:.6rem; flex-wrap:wrap; }
+    .form-row .field { flex:1; min-width:240px; display:flex; align-items:center; gap:.6rem; border:1.5px solid var(--pi-border); border-radius:10px; padding:0 .85rem; background:#fff; transition:border-color .15s; }
+    .form-row .field:focus-within { border-color:var(--pi-violet); }
+    .form-row .field svg { width:18px; height:18px; color:var(--color-text-tertiary); flex-shrink:0; }
+    .form-row input { flex:1; border:none; outline:none; font-family:inherit; font-size:1rem; padding:.8rem 0; background:transparent; color:var(--pi-black); }
+    .btn-run { border:none; background:var(--pi-violet); color:#fff; font-family:inherit; font-size:.95rem; font-weight:500; padding:0 1.4rem; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:.5rem; transition:background .15s, transform .05s; }
+    .btn-run:hover { background:#3d0080; }
+    .btn-run:active { transform:translateY(1px); }
+    .btn-run svg { width:16px; height:16px; }
+
+    .samples { margin-top:.9rem; display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+    .samples .lbl { font-size:.78rem; color:var(--color-text-tertiary); }
+    .chip { font-size:.78rem; padding:4px 11px; border-radius:999px; border:1px solid var(--pi-border); background:#fff; color:var(--pi-muted); cursor:pointer; transition:all .12s; }
+    .chip:hover { border-color:var(--pi-violet); color:var(--pi-violet); }
+
+    .proto-note { display:flex; gap:.6rem; align-items:flex-start; font-size:.82rem; color:var(--pi-muted); background:#FBF6E9; border:1px solid #F0E4C0; border-radius:10px; padding:.7rem .9rem; margin-bottom:1.25rem; line-height:1.5; }
+    .proto-note svg { width:16px; height:16px; flex-shrink:0; color:#B98900; margin-top:1px; }
+    .proto-note strong { color:#8A6500; font-weight:500; }
+
+    /* ── Output stage ── */
+    #stage { margin:0 0 3rem; }
+    .loading { display:none; flex-direction:column; align-items:center; justify-content:center; padding:3.5rem 1rem; gap:1rem; }
+    .loading.on { display:flex; }
+    .spinner { width:34px; height:34px; border:3px solid #E7E4DC; border-top-color:var(--pi-violet); border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading p { font-size:.9rem; color:var(--color-text-tertiary); }
+
+    .brief-shell { background:#fff; border:1px solid var(--pi-border); border-radius:16px; box-shadow:var(--shadow); padding:1.1rem 1.25rem 1.35rem; }
+
+    /* ── Brief layout (faithful to skill spec) ── */
+    .brief-wrap { font-size:14px; color:var(--color-text-primary); }
+    .contact-header { background:var(--color-background-primary); border:1px solid var(--color-border-tertiary); border-radius:var(--border-radius-lg); padding:1rem 1.25rem; margin-bottom:12px; display:flex; align-items:center; gap:14px; }
+    .avatar { width:48px; height:48px; border-radius:50%; background:var(--color-background-info); display:flex; align-items:center; justify-content:center; font-weight:500; font-size:15px; color:var(--color-text-info); flex-shrink:0; }
+    .contact-name { font-size:16px; font-weight:500; margin:0 0 3px; }
+    .contact-meta { font-size:13px; color:var(--color-text-secondary); margin:0; }
+    .badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+    .badge { font-size:11px; padding:2px 8px; border-radius:999px; font-weight:500; }
+    .badge-hot { background:#FAECE7; color:#993C1D; }
+    .badge-warm { background:#FAEEDA; color:#854F0B; }
+    .badge-cold { background:#F1EFE8; color:#5F5E5A; }
+    .badge-new { background:#EAF3DE; color:#3B6D11; }
+    .badge-channel { background:var(--color-background-info); color:var(--color-text-info); }
+    .badge-persona { background:#EEEDFE; color:#534AB7; }
+    .badge-ba { background:#E1F5EE; color:#0F6E56; }
+    .badge-no-ba { background:var(--color-background-secondary); color:var(--color-text-tertiary); }
+    .section { padding:0.875rem 1rem; margin-bottom:10px; border-radius:0; }
+    .section-signal { border-left:3px solid #EF9F27; background:var(--color-background-secondary); }
+    .section-intent { border-left:3px solid #378ADD; background:var(--color-background-secondary); }
+    .section-pain { border-left:3px solid #E24B4A; background:var(--color-background-secondary); }
+    .section-action { border-left:3px solid #1D9E75; background:var(--color-background-secondary); }
+    .section-label { font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--color-text-tertiary); font-weight:500; margin-bottom:6px; display:flex; align-items:center; gap:5px; }
+    .section-label svg { width:13px; height:13px; }
+    .section-body { font-size:13px; color:var(--color-text-primary); line-height:1.6; margin:0; }
+    .snapshot-grid { display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:8px; margin-bottom:10px; }
+    .snap-tile { background:var(--color-background-secondary); border-radius:var(--border-radius-md); padding:0.75rem; text-align:center; }
+    .snap-label { font-size:11px; color:var(--color-text-tertiary); margin-bottom:4px; }
+    .snap-val { font-size:14px; font-weight:500; }
+    .intent-pills { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+    .pill { font-size:11px; padding:3px 9px; border-radius:999px; background:var(--color-background-info); color:var(--color-text-info); }
+    .talk-track { background:var(--color-background-primary); border:1px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:0.75rem 1rem; margin-top:10px; font-size:13px; font-style:italic; color:var(--color-text-secondary); line-height:1.6; }
+    .action-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; }
+    .mini-avatar { width:32px; height:32px; border-radius:50%; background:var(--color-background-info); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:500; color:var(--color-text-info); flex-shrink:0; }
+    .action-detail { font-size:13px; color:var(--color-text-primary); line-height:1.5; }
+    .ba-note { background:var(--color-background-secondary); border-radius:var(--border-radius-md); padding:0.75rem 1rem; margin-top:10px; }
+    .draft-btn { margin-top:10px; font-size:12px; padding:6px 13px; cursor:pointer; border:1px solid var(--pi-violet); background:#fff; color:var(--pi-violet); border-radius:7px; font-family:inherit; font-weight:500; transition:all .12s; }
+    .draft-btn:hover { background:var(--pi-violet); color:#fff; }
+    .footer { font-size:11px; color:var(--color-text-tertiary); margin-top:10px; padding-top:8px; border-top:1px solid var(--color-border-tertiary); }
+    .footer a { color:var(--color-text-info); text-decoration:none; }
+    .footer a:hover { text-decoration:underline; }
+
+    /* toast */
+    #toast { position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px); background:var(--pi-purple); color:#fff; font-size:.85rem; padding:.7rem 1.1rem; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.2); opacity:0; pointer-events:none; transition:all .25s; z-index:50; max-width:90vw; }
+    #toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    @media (max-width:560px) { .snapshot-grid { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a class="logo-link" href="../index.html"><img src="../PI_Logo_White.png" alt="The Predictive Index" /></a>
+      <span class="header-label"><a href="../index.html">← Back to showcase</a></span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <span class="eyebrow">Sales Enablement</span>
+      <h1>Pre-Call Intelligence Brief</h1>
+      <p class="sub">Drop in a prospect's email and get a scannable, ready-for-the-call brief — signal, intent, pain angle, persona-tuned next action, and BA messaging — in the exact format from the call-prep skill.</p>
+
+      <div class="form-card">
+        <form id="prep-form" autocomplete="off">
+          <div class="form-row">
+            <label class="field">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <input type="email" id="email" placeholder="prospect@company.com" required />
+            </label>
+            <button class="btn-run" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              Run call prep
+            </button>
+          </div>
+        </form>
+        <div class="samples">
+          <span class="lbl">Try a real lead:</span>
+          <button class="chip" data-email="kbarros@uhmproperties.com">Keila Barros · UHM Properties</button>
+          <button class="chip" data-email="melissa.brown@lchhfamily.com">Melissa Brown · Life Care Home Health</button>
+          <button class="chip" data-email="bjohnson1@baltimorecountymd.gov">Blaire Johnson · Board of Elections</button>
+          <button class="chip" data-email="matthew.saber@sgwealthmanagers.com">Matthew Saber · SG Wealth</button>
+          <button class="chip" data-email="bcombs@adriansteel.com">Bobby Combs · Adrian Steel</button>
+        </div>
+      </div>
+
+      <div class="proto-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <div><strong>Prototype with 5 real leads.</strong> These briefs were assembled from live HubSpot, Salesforce, and Slack (#qualified-success-celebration) data pulled on Jun 17, 2026, then baked in as static samples so the page renders every time. Live, on-demand connector pulls get wired in once the data path is chosen. Contains real prospect contact info — keep internal.</div>
+      </div>
+    </section>
+
+    <section id="stage">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Preparing your call prep…</p>
+      </div>
+      <div id="brief"></div>
+    </section>
+  </main>
+
+  <div id="toast"></div>
+
+  <script>
+  /* ──────────────────────────────────────────────────────────────
+     MOCK DATA — replace with live connector pulls later.
+     Each record mirrors what the skill assembles from
+     HubSpot + Salesforce + Slack + PI Assistant.
+     ────────────────────────────────────────────────────────────── */
+  const MOCK = {
+    "kbarros@uhmproperties.com": {
+      firstName:"Keila", lastName:"Barros", title:"", company:"UHM Properties",
+      companySize:"51–100", location:"Chelsea, MA",
+      email:"kbarros@uhmproperties.com", phone:"(617) 541-5510",
+      signalClass:"new", signalLabel:"New — demo booked Jun 23",
+      signalBody:"Brand-new today: Keila came in on the pricing page and requested a demo, then booked same-day for Jun 23 (9:30 AM ET, with Nate Dobro). Entering on /plans/ and converting immediately is a strong, ROI-minded buying signal.",
+      channelBadge:null, meetingBadge:"Demo · Jun 23",
+      intent:{ body:"Started on the plans/pricing page and went straight to a demo request — she's evaluating cost and plan fit for a 51–100 person team, not just browsing.",
+               pills:["Pricing-focused","Demo requested","High intent"] },
+      pain:"A 51–100 person property-management firm without a big HR function — every hire matters and turnover in field/office roles is costly. She wants confidence in who she's hiring and a clear ROI story before she commits budget.",
+      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
+      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229199120947",
+      slackNote:"Qualified meeting brief posted today",
+      contacts:[
+        { firstName:"Keila", lastName:"Barros", title:"",
+          persona:"Buyer (inferred)",
+          personaApproach:"No title on file, but a pricing-page entry at a 51–100 firm reads as an owner/operator evaluating cost and ROI. Lead with business outcomes and plan fit for her size; confirm early whether she owns HR or the business.",
+          cta:"Prep for booked demo — Jun 23, 9:30 AM ET (owner: Nate Dobro)",
+          talkTrack:"You came in through our plans page and booked a demo the same day, so let's make it count — I'll show you exactly what PI looks like for a team your size and walk the ROI math with you.",
+          ba:null }
+      ]
+    },
+
+    "melissa.brown@lchhfamily.com": {
+      firstName:"Melissa", lastName:"Brown", title:"", company:"Life Care Home Health Family",
+      companySize:"1,001–5,000", location:"Irving, TX",
+      email:"melissa.brown@lchhfamily.com", phone:"(469) 648-3206",
+      signalClass:"new", signalLabel:"New — high-intent, demo booked",
+      signalBody:"Brand-new today: brand-searched PI on Bing, explored several product pages, and booked a demo for Jun 22 (12 PM CT, with Mike Tannous). Multi-page exploration plus a demo request is about as high-intent as a fresh lead gets.",
+      channelBadge:"Paid search", meetingBadge:"Demo · Jun 22",
+      intent:{ body:"Searched for PI by name on Bing, then explored the software, behavioral assessment, and interview-guide pages before requesting a demo — she's assessment-aware and looking at the full hiring workflow.",
+               pills:["Brand search","Behavioral assessment","Demo requested"] },
+      pain:"A 1,001–5,000 person home-health org lives and dies by caregiver hiring and turnover. She needs hiring that's scalable and defensible across many locations — consistency and speed at volume, not a boutique process.",
+      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
+      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229171877412",
+      slackNote:"Qualified meeting brief posted today",
+      contacts:[
+        { firstName:"Melissa", lastName:"Brown", title:"",
+          persona:"Talent (inferred)",
+          personaApproach:"No title on file, but viewing the behavioral assessment and interview guide signals an HR/talent buyer. Lead with scalable, defensible hiring across locations and high-volume caregiver roles; she already gets the assessment angle.",
+          cta:"Prep for booked demo — Jun 22, 12 PM CT (owner: Mike Tannous)",
+          talkTrack:"You looked at our assessment and the interview guide before booking — most healthcare teams your size are fighting caregiver turnover. I'll show you how PI makes hiring repeatable across every location.",
+          ba:null }
+      ]
+    },
+
+    "bjohnson1@baltimorecountymd.gov": {
+      firstName:"Blaire", lastName:"Johnson", title:"", company:"Baltimore County Board of Elections",
+      companySize:"26–50", location:"Alexandria, VA",
+      email:"bjohnson1@baltimorecountymd.gov", phone:"(240) 319-2072",
+      signalClass:"new", signalLabel:"New — demo booked Jun 18",
+      signalBody:"Brand-new today: came in on a Bing brand search, viewed the software overview, and requested a demo booked for Jun 18 (9 AM ET, with Nate Dobro). Public-sector buyer moving quickly from search to demo.",
+      channelBadge:"Paid search", meetingBadge:"Demo · Jun 18",
+      intent:{ body:"Entered on a Bing brand search for Predictive Index, viewed the software overview, and requested a demo — early-stage but high-intent, in a public-sector hiring context.",
+               pills:["Brand search","Demo requested","Public sector"] },
+      pain:"Government hiring has to be objective, standardized, and audit-ready — especially for election staffing under public scrutiny. She needs defensible selection she can stand behind, and a fast rollout for seasonal hiring spikes.",
+      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
+      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229210674705",
+      slackNote:"Qualified meeting brief posted today",
+      contacts:[
+        { firstName:"Blaire", lastName:"Johnson", title:"",
+          persona:"Public-sector buyer (inferred)",
+          personaApproach:"No title on file; a Board of Elections buyer is defensibility- and compliance-sensitive. Lead with objective, standardized selection and audit-ready data, and frame ROI around accountability and seasonal/election staffing rather than pure cost savings.",
+          cta:"Prep for booked demo — Jun 18, 9 AM ET (owner: Nate Dobro)",
+          talkTrack:"Public-sector hiring has to be defensible and consistent. I'll show you how PI gives you objective, standardized selection you can stand behind — and how fast it is to roll out when election staffing ramps.",
+          ba:null }
+      ]
+    },
+
+    "matthew.saber@sgwealthmanagers.com": {
+      firstName:"Matthew", lastName:"Saber", title:"Portfolio Manager", company:"SG Wealth Managers",
+      companySize:"1–25", location:"Phoenix, AZ",
+      email:"matthew.saber@sgwealthmanagers.com", phone:"+1 (480) 597-1946",
+      signalClass:"new", signalLabel:"New — qual call today",
+      signalBody:"Brand-new today: found PI via ChatGPT and booked a qualification meeting today (Jun 17, 1:15 PM MT, with Allan Serpa). He's already on the calendar — this is prep for a call happening now, not outreach.",
+      channelBadge:null, meetingBadge:"Qual · today",
+      intent:{ body:"Discovered PI through ChatGPT and booked a qualification meeting after viewing the demo page — a tech-forward small-firm buyer who moves fast.",
+               pills:["Found via ChatGPT","Demo page","Qual booked"] },
+      pain:"At a 1–25 person wealth firm, every hire is high-stakes and a bad advisor or ops hire is expensive. As Portfolio Manager he's likely a principal — he wants confidence in fit, fast, not a long evaluation.",
+      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
+      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229182575385",
+      slackNote:"Qualified meeting brief posted today",
+      contacts:[
+        { firstName:"Matthew", lastName:"Saber", title:"Portfolio Manager",
+          persona:"Leader / owner (inferred)",
+          personaApproach:"At a 1–25 person firm, a Portfolio Manager is most likely a principal and the buyer — not an HR end user. Treat him as the decision-maker: lead with confidence-in-fit and the cost of a bad hire, keep it fast and outcome-driven. Found us via ChatGPT, so he'll appreciate a sharp, modern pitch.",
+          cta:"Prep for qual meeting — TODAY, Jun 17, 1:15 PM MT (owner: Allan Serpa)",
+          talkTrack:"You found us through ChatGPT, so I know you move fast — I'll match that. At a firm your size every hire matters, and PI gets you a confident read on fit before you commit.",
+          ba:null }
+      ]
+    },
+
+    "bcombs@adriansteel.com": {
+      firstName:"Bobby", lastName:"Combs", title:"", company:"Adrian Steel",
+      companySize:"501–1,000", location:"Adrian, MI",
+      email:"bcombs@adriansteel.com", phone:"+1 (913) 961-1590",
+      signalClass:"new", signalLabel:"New — qual call today",
+      signalBody:"Brand-new today: searched \"the predictive index pi test\" on Bing, dug into the Cognitive Assessment page, then booked a qualification meeting today (Jun 17, 4:15 PM ET, with Mike Tannous) right after a live chat. Strong, assessment-led intent.",
+      channelBadge:null, meetingBadge:"Qual · today",
+      intent:{ body:"Searched \"predictive index pi test\" on Bing and focused on the Cognitive Assessment page, then booked after a live chat and form — targeted interest in how candidates are measured.",
+               pills:["Cognitive assessment","Live chat","High intent"] },
+      pain:"A 501–1,000 person manufacturer hiring across the floor and into management needs objective screening at scale — fewer mis-hires, less reliance on gut feel. His focus on the cognitive assessment says he cares about how rigorously candidates are measured.",
+      lifecycleStage:"SAL", openDeals:0, domainCount:1, lastActivity:"Today",
+      hubspotUrl:"https://app.hubspot.com/contacts/50163014/record/0-1/229189606022",
+      slackNote:"Qualified meeting brief posted today",
+      contacts:[
+        { firstName:"Bobby", lastName:"Combs", title:"",
+          persona:"Talent (inferred)",
+          personaApproach:"No title on file, but going straight to the Cognitive Assessment page and searching \"pi test\" reads as an assessment-led HR/ops buyer. Lead with objective candidate screening at scale for floor and management roles, and the rigor of the science.",
+          cta:"Prep for qual meeting — TODAY, Jun 17, 4:15 PM ET (owner: Mike Tannous)",
+          talkTrack:"You went straight to the cognitive assessment and even searched 'PI test', so you're clearly evaluating how we measure candidates. I'll show you how the science holds up at Adrian Steel's scale.",
+          ba:null }
+      ]
+    }
+  };
+
+  /* ── Persona mapping (skill Step 3) ── */
+  function mapPersona(title){
+    const t = (title||"").toLowerCase();
+    if (/ceo|president|founder|owner/.test(t)) return { persona:"Leader Luke", approach:"Lead with business-operator language — ROI, the cost of a bad hire, scaling, team productivity. Peer-CEO proof. Keep it short and fast; skip feature detail." };
+    if (/chro|chief people|vp.*hr|vp of human|head of (hr|people)/.test(t)) return { persona:"Talent Tori", approach:"She holds budget. Lead with strategic outcomes — ROI, board defensibility, employer brand — not daily workflow." };
+    if (/hr manager|hr director|hr generalist|talent acquisition|recruit/.test(t)) return { persona:"Talent Tess", approach:"She's the champion who carries the deal. Lead with time savings, making hiring managers follow a process, and defensible data for her CEO. She fears tool sprawl and low adoption — don't pitch her the VP narrative." };
+    if (/manager|team lead/.test(t)) return { persona:"Leader Lin", approach:"End user, not a buyer. Talk team dynamics, coaching, and understanding her people. Useful for expansion and Inspire." };
+    if (/l&d|learning & development|learning and development/.test(t)) return { persona:"L&D Manager", approach:"Influencer on Inspire/Design deals. Lead with development and team effectiveness outcomes." };
+    return { persona:"Persona (inferred)", approach:"Title didn't map cleanly — closest read is a people/HR buyer. Confirm role early and tune ROI vs. workflow framing accordingly." };
+  }
+
+  /* ── BA talk-track modifiers (skill Step 4) ── */
+  const BA_MODIFIER = {
+    Maverick:"Lead bold and move fast — skip the setup or they'll disengage in the first 20 seconds.",
+    Strategist:"Open with the framework — “here's how PI approaches this” lands before outcomes.",
+    Operator:"Reliability and process clarity — show how it works, not just what it is.",
+    Collaborator:"Team impact first — “what this does for your managers” before “what it does for you.”",
+    Captain:"Vision plus bottom line — be fast and decisive; she wants to know it'll work."
+  };
+
+  function initials(f,l){ return ((f||" ")[0]+(l||" ")[0]).toUpperCase().trim(); }
+  function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+
+  /* ── Build a fallback "not found" record from any unknown email ── */
+  function fallbackRecord(email){
+    const local = email.split("@")[0] || "";
+    const domain = (email.split("@")[1] || "").split(".")[0] || "the account";
+    const parts = local.split(/[._-]/).filter(Boolean);
+    const first = parts[0] ? parts[0][0].toUpperCase()+parts[0].slice(1) : "This contact";
+    const last  = parts[1] ? parts[1][0].toUpperCase()+parts[1].slice(1) : "";
+    const company = domain.charAt(0).toUpperCase()+domain.slice(1);
+    return {
+      firstName:first, lastName:last, title:"", company:company,
+      email:email, phone:"—",
+      signalClass:"cold", signalLabel:"Not found in HubSpot or Salesforce",
+      signalBody:"No record for this email in HubSpot or Salesforce. Treat as net-new — research the domain, confirm the role, and open with discovery rather than a tailored pitch.",
+      channelBadge:null, intent:null,
+      pain:"Unknown — no engagement history on file. Use the first call to surface what's actually driving the hiring need.",
+      lifecycleStage:"—", openDeals:0, lastActivity:"—", hubspotUrl:"#", slackNote:null,
+      notFound:true,
+      contacts:[ { firstName:first, lastName:last, title:"",
+        cta:"Discovery call — confirm role and current hiring pain", talkTrack:"I'm reaching out cold, so I'll keep it honest — a lot of teams your size are wrestling with making hiring decisions stick. Mind if I ask how you're handling that today?", ba:null } ]
+    };
+  }
+
+  /* ── SVG section icons ── */
+  const ICON = {
+    bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
+    eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+    alert:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+    user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6.5 19a6 6 0 0 1 11 0"/></svg>'
+  };
+
+  /* ── Render the brief (faithful to skill output order) ── */
+  function renderBrief(rec){
+    const primary = rec.contacts[0];
+    // persona: prefer explicit (inferred from full context) over title-only mapping
+    const resolvePersona = c => (c.persona ? { persona:c.persona, approach:c.personaApproach } : mapPersona(c.title || rec.title));
+    const pm = resolvePersona(primary);
+    const hasBA = !!(primary.ba && primary.ba.profile);
+    const ts = new Date().toLocaleString('en-US',{ month:'short', day:'numeric', hour:'numeric', minute:'2-digit' });
+
+    // header badges
+    let badges = `<span class="badge badge-${rec.signalClass}">${esc(rec.signalLabel)}</span>`;
+    if (rec.channelBadge) badges += `<span class="badge badge-channel">${esc(rec.channelBadge)}</span>`;
+    if (rec.meetingBadge) badges += `<span class="badge badge-channel">📅 ${esc(rec.meetingBadge)}</span>`;
+    badges += `<span class="badge badge-persona">${esc(pm.persona)}</span>`;
+    badges += hasBA
+      ? `<span class="badge badge-ba">BA: ${esc(primary.ba.profile)}</span>`
+      : `<span class="badge badge-no-ba">No BA on file</span>`;
+
+    // intent block (omit if none)
+    let intentBlock = "";
+    if (rec.intent) {
+      const pills = rec.intent.pills.slice(0,3).map(p=>`<span class="pill">${esc(p)}</span>`).join("");
+      intentBlock = `
+      <div class="section section-intent">
+        <div class="section-label">${ICON.eye}What they've been looking at</div>
+        <p class="section-body">${esc(rec.intent.body)}</p>
+        <div class="intent-pills">${pills}</div>
+      </div>`;
+    }
+
+    // next-action rows (each contact at domain)
+    const actionRows = rec.contacts.map(c=>{
+      const cpm = resolvePersona(c);
+      const cBA = !!(c.ba && c.ba.profile);
+      const baBadge = cBA
+        ? `<span class="badge badge-ba" style="font-size:10px;">BA: ${esc(c.ba.profile)}</span>`
+        : `<span class="badge badge-no-ba" style="font-size:10px;">No BA on file</span>`;
+      let approach = cpm.approach;
+      if (cBA && BA_MODIFIER[c.ba.profile]) approach += " " + BA_MODIFIER[c.ba.profile];
+      return `
+      <div class="action-row">
+        <div class="mini-avatar">${esc(initials(c.firstName,c.lastName))}</div>
+        <div class="action-detail">
+          <strong>${esc(c.firstName)} ${esc(c.lastName)}</strong> — ${esc(c.cta)}<br>
+          <span class="badge badge-persona" style="font-size:10px;">${esc(cpm.persona)}</span>
+          &nbsp;${baBadge}<br><br>
+          ${esc(approach)}
+        </div>
+      </div>`;
+    }).join("");
+
+    // talk track from primary
+    let talk = primary.talkTrack;
+
+    // draft button payload
+    const draftPayload = {
+      name: `${primary.firstName} ${primary.lastName}`,
+      company: rec.company,
+      persona: pm.persona,
+      ba: hasBA ? primary.ba.profile : "none",
+      pain: rec.pain
+    };
+
+    // BA note block (only if primary has no BA)
+    const baNote = hasBA ? "" : `
+      <div class="ba-note">
+        <p class="section-label" style="margin-bottom:5px;">${ICON.user}No BA on file</p>
+        <p class="section-body" style="color:var(--color-text-secondary);">If ${esc(primary.firstName)} completes a Try PI assessment, you'll unlock their reference profile — letting you tailor the exact communication style, pace, and framing for this conversation.</p>
+      </div>`;
+
+    // footer (note Slack state)
+    let slackBit = rec.slackNote ? ` · ${esc(rec.slackNote)}` : "";
+
+    const html = `
+    <div class="brief-shell">
+      <div class="brief-wrap">
+
+        <div class="contact-header">
+          <div class="avatar">${esc(initials(primary.firstName,primary.lastName))}</div>
+          <div style="flex:1;">
+            <p class="contact-name">${esc(primary.firstName)} ${esc(primary.lastName)}</p>
+            <p class="contact-meta">${esc(primary.title||rec.title||"Role unknown")} · ${esc(rec.company)}${rec.companySize ? " · "+esc(rec.companySize)+" employees" : ""}</p>
+            <p class="contact-meta">${esc(rec.email)} · ${esc(rec.phone)}${rec.location ? " · "+esc(rec.location) : ""}</p>
+            <div class="badges">${badges}</div>
+          </div>
+        </div>
+
+        <div class="section section-signal">
+          <div class="section-label">${ICON.bolt}Signal</div>
+          <p class="section-body">${esc(rec.signalBody)}</p>
+        </div>
+
+        ${intentBlock}
+
+        <div class="section section-pain">
+          <div class="section-label">${ICON.alert}Pain angle</div>
+          <p class="section-body">${esc(rec.pain)}</p>
+        </div>
+
+        <div class="section section-action">
+          <div class="section-label">${ICON.arrow}Next action</div>
+          ${actionRows}
+          <div class="talk-track">"${esc(talk)}"</div>
+          <button class="draft-btn" data-draft='${esc(JSON.stringify(draftPayload))}'>Draft outreach ↗</button>
+        </div>
+
+        <div class="snapshot-grid">
+          <div class="snap-tile"><div class="snap-label">Stage</div><div class="snap-val">${esc(rec.lifecycleStage)}</div></div>
+          <div class="snap-tile"><div class="snap-label">Open deals</div><div class="snap-val">${esc(rec.openDeals)}</div></div>
+          <div class="snap-tile"><div class="snap-label">At domain</div><div class="snap-val">${esc(rec.domainCount != null ? rec.domainCount : rec.contacts.length)}</div></div>
+          <div class="snap-tile"><div class="snap-label">Last activity</div><div class="snap-val">${esc(rec.lastActivity)}</div></div>
+        </div>
+
+        ${baNote}
+
+        <div class="footer">
+          Sources: HubSpot · Salesforce · Slack #qualified-success-celebration${slackBit} · ${esc(ts)} · <a href="${esc(rec.hubspotUrl)}">View in HubSpot</a>
+        </div>
+
+      </div>
+    </div>`;
+    return html;
+  }
+
+  /* ── Wire up interactions ── */
+  const form = document.getElementById('prep-form');
+  const emailInput = document.getElementById('email');
+  const loadingEl = document.getElementById('loading');
+  const briefEl = document.getElementById('brief');
+
+  function run(email){
+    email = (email||"").trim().toLowerCase();
+    if (!email || !email.includes("@")) { emailInput.focus(); return; }
+    briefEl.innerHTML = "";
+    loadingEl.classList.add('on');
+    // simulate the silent parallel pull + render-in-one-shot behavior
+    setTimeout(()=>{
+      const rec = MOCK[email] || fallbackRecord(email);
+      briefEl.innerHTML = renderBrief(rec);
+      loadingEl.classList.remove('on');
+      briefEl.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 850);
+  }
+
+  form.addEventListener('submit', e=>{ e.preventDefault(); run(emailInput.value); });
+  document.querySelectorAll('.chip').forEach(c=>{
+    c.addEventListener('click', ()=>{ emailInput.value = c.dataset.email; run(c.dataset.email); });
+  });
+
+  // Draft outreach -> build a prompt and copy to clipboard
+  briefEl.addEventListener('click', e=>{
+    const btn = e.target.closest('.draft-btn');
+    if (!btn) return;
+    let p; try { p = JSON.parse(btn.dataset.draft); } catch(_) { return; }
+    const prompt = `Draft a short, personalized outreach email to ${p.name} at ${p.company}.\nPersona: ${p.persona}. BA profile: ${p.ba}.\nPain angle to lead with: ${p.pain}\nKeep it under 120 words, warm and specific, one clear CTA.`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(prompt).then(()=>toast("Outreach prompt copied — paste into Claude to draft the email")).catch(()=>toast("Copy this prompt into Claude:\n\n"+prompt));
+    } else {
+      toast("Copy this prompt into Claude to draft the email");
+    }
+  });
+
+  let toastTimer;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('on'), 3200);
+  }
+  </script>
+</body>
+</html>
